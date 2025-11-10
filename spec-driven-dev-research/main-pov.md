@@ -1440,50 +1440,564 @@ Response:
 
 ### 2.7 Spec-Driven in the Context of Rapidly Evolving AI Agents
 
-[Content: How to think about spec-driven as AI capabilities improve]
+**The Investment Paradox:** How do you invest in structure when the tools change every few months?
+
+---
 
 #### The Landscape is Changing Fast
-- New AI models every few months (GPT-4, Claude 3.5 Sonnet, Gemini 2.0)
-- New agent frameworks constantly (15+ platforms in 2024-2025)
-- Capabilities improving exponentially
-[Content: How do you invest in structure when everything changes monthly?]
+
+The AI coding landscape in 2025 is moving at unprecedented speed:
+
+**Model Releases:**
+- **Q4 2024:** GPT-4 Turbo, Claude 3.5 Sonnet, Gemini 1.5 Pro
+- **Q1 2025:** GPT-4.5, Claude 3.5 Opus, Gemini 2.0
+- **Expected Q2 2025:** GPT-5, Claude 4.0
+
+**New Platforms:**
+- **2024:** 15+ AI coding platforms launched
+- **2025 (ongoing):** Devin, Cursor Agent Mode 2.0, GitHub Copilot Workspace, AWS Kiro, dozens more
+
+**Capability Jumps:**
+- Context windows: 8K tokens (2023) → 200K+ tokens (2025)
+- Accuracy: 60% first-time correct → 85-90% on many tasks
+- Autonomy: Supervised (2023) → Autonomous multi-step (2025)
+
+**The Question:** Why invest time writing specifications if the AI will just get better at figuring things out anyway? Won't specs become obsolete?
+
+---
 
 #### Why Specifications Remain Valuable Despite Rapid Change
 
-**Reason 1: Agent-Agnostic**
-[Content: GitHub Spec Kit works with 15+ agents. Specifications don't lock you into one tool.]
+**Reason 1: Agent-Agnostic = Future-Proof**
 
-**Reason 2: Human-Readable Knowledge**
-[Content: Specifications are human-first, AI-compatible. They're project documentation regardless of AI.]
+Specifications aren't tied to specific AI models:
+
+**GitHub Spec Kit Example:**
+- Works with 15+ agents TODAY
+- Same spec works with GPT-4, Claude 3.5, Gemini 2.0
+- Tomorrow's Claude 4.0 or GPT-5? Same spec will work
+
+**The Value:**
+You're not investing in "how to use Cursor" (tool-specific skill). You're investing in "how to write clear specifications" (transferable skill). Even if Cursor dies tomorrow, your specs work with the next tool.
+
+**Analogy:** SQL skills transfer across PostgreSQL, MySQL, Oracle. Specification skills transfer across AI agents.
+
+---
+
+**Reason 2: Human-Readable Knowledge (First and Foremost)**
+
+Specifications are **project documentation**, not just AI input:
+
+**Primary Audience:** Humans
+- Product managers understand requirements
+- Security teams verify compliance
+- New developers onboard
+- Stakeholders review features
+
+**Secondary Audience:** AI agents
+- Specs happen to be AI-readable too
+- Bonus benefit, not primary purpose
+
+**Even if AI disappears tomorrow:** You still have comprehensive project documentation. Specifications aren't wasted investment.
+
+---
 
 **Reason 3: Governance Survives AI Evolution**
-[Content: Compliance requirements don't change because models improve. Audit trails still needed.]
+
+Compliance requirements **don't change** just because AI improves:
+
+| Requirement | Pre-AI | With AI | With Better AI |
+|-------------|--------|---------|----------------|
+| **HIPAA compliance** | Required | Required | **Still required** |
+| **Audit trails** | Required | Required | **Still required** |
+| **Security review** | Required | Required | **Still required** |
+| **Stakeholder signoff** | Required | Required | **Still required** |
+
+**AI getting smarter doesn't eliminate governance needs.** Specifications provide the governance layer.
+
+Even if GPT-6 is perfect at coding, auditors still ask: "Show me the specification that defines this security requirement."
+
+---
 
 **Reason 4: Quality Gates Independent of AI Capability**
-[Content: Even if AI gets better at coding, you still need verification, testing, review processes.]
 
-#### The Adaptive Approach
-[Content: How to use spec-driven without betting everything on current tools]
-- Start with lightweight specifications (don't over-invest)
-- Use open-source frameworks (avoid vendor lock-in)
-- Focus on governance value, not just AI efficiency
-- Expect to evolve specifications as AI improves
+Even perfect AI needs verification:
+
+**The Problem with "Trust the AI":**
+- Who defines "what to build"? (Human decision, not AI)
+- How do you verify it's correct? (Test against spec)
+- What if PM changes their mind? (Update spec, regenerate)
+- How do you know edge cases were considered? (Documented in spec)
+
+**Specifications Enable:**
+- **Definition of "done"**: Acceptance criteria
+- **Testability**: Convert spec to tests
+- **Change management**: Update spec, track changes
+- **Accountability**: Spec says X, code does Y → clear gap
+
+**Even with perfect AI:** You still need to define requirements, verify correctness, manage changes. Specifications do this.
+
+---
+
+#### The Adaptive Approach: How to Use Spec-Driven Without Over-Investing
+
+**The Balance:** Invest enough for governance value, not so much that you over-specify for current AI.
+
+**1. Start Lightweight**
+
+Don't write 10-page specifications for simple features:
+
+❌ **Over-specification:**
+```markdown
+## User Login Feature
+### Detailed Requirements (500 lines)
+- Button color: #3B82F6
+- Button hover state: #2563EB
+- Animation: 200ms ease-in-out
+- Font: Inter 14px weight 500
+[... 490 more lines of UI details]
+```
+
+✅ **Right-sized specification:**
+```markdown
+## User Login Feature
+- Email + password authentication
+- "Remember me" checkbox (30-day session)
+- Password reset link
+- Error handling for invalid credentials
+- Rate limiting: 5 attempts per 15 minutes
+```
+
+**Rule of Thumb:** Specify "what" and "why", not "how" in pixel-level detail.
+
+---
+
+**2. Use Open-Source Frameworks (Avoid Vendor Lock-In)**
+
+**Prefer:**
+- ✅ GitHub Spec Kit (open source, works with 15+ agents)
+- ✅ Markdown-based specs (universal format)
+- ✅ Version-controlled in git (tool-independent)
+
+**Avoid:**
+- ❌ Proprietary spec formats tied to one platform
+- ❌ Locked-in cloud services with no export
+- ❌ Tool-specific workflows that don't transfer
+
+**Why:** If AWS Kiro shuts down, your Markdown specs still work. If you used proprietary format, you're stuck.
+
+---
+
+**3. Focus on Governance Value, Not Just AI Efficiency**
+
+Justify spec-driven by governance, not just AI:
+
+**Wrong Framing:**
+"We use specs because AI works better with them"
+- Risk: AI improves → specs become unnecessary
+
+**Right Framing:**
+"We use specs for audit trails, compliance, and quality gates. AI happens to work well with them too."
+- Stable: Governance needs persist regardless of AI capability
+
+**The Pitch to Leadership:**
+Don't sell spec-driven as "makes AI faster." Sell it as "provides governance we need anyway, plus makes AI more effective."
+
+---
+
+**4. Expect to Evolve Specifications as AI Improves**
+
+Specifications should get **simpler** as AI gets smarter, not more complex:
+
+**2025 (Current):**
+```markdown
+### Password Validation
+- Minimum 12 characters
+- Must include: uppercase, lowercase, number, symbol
+- Cannot contain username
+- Cannot be in common password list (check against Have I Been Pwned API)
+```
+
+**2027 (Future AI is smarter):**
+```markdown
+### Password Validation
+- Industry-standard strong password requirements
+```
+
+**Why it works:** Better AI understands "industry-standard" without explicit enumeration. You evolve specs to be more concise, not more detailed.
+
+**The Principle:** As AI capabilities improve, reduce specification detail, but **keep the governance layer** (what needs to be built, why, acceptance criteria).
+
+---
+
+#### The Real Risk (And How to Avoid It)
+
+**The Risk:** Over-investing in detailed specifications that AI doesn't need.
+
+**How to Avoid:**
+1. **Start minimal**: Write simplest spec that provides governance value
+2. **Iterate based on AI performance**: If AI misunderstands, add detail. If AI gets it right, keep it simple.
+3. **Measure time savings**: If writing specs takes longer than debugging, you're over-specifying
+4. **Focus on edge cases**: Spend time documenting unusual cases, not obvious happy paths
+
+---
+
+**The Bottom Line:**
+
+Specifications are **governance infrastructure**, not just AI training wheels. As AI improves:
+
+- ✅ Governance value remains (compliance, audit, quality gates)
+- ✅ Specifications become simpler (less detail needed)
+- ✅ Human-readable documentation value persists
+- ✅ Agent-agnostic specs work with better future AI
+
+**Invest in specifications for long-term governance, not just current AI efficiency.**
 
 ### 2.8 Technical Architecture & Context Engineering
 
-[Content: How specifications work technically with AI agents]
+How do specifications actually work with AI agents? Where do they live? How do teams integrate them into existing workflows?
 
-#### Infrastructure Patterns
-[Content: Where specifications live, version control, integration with CI/CD]
+---
 
-#### Context Engineering Principles
-[Content: How to write specifications that AI agents understand well]
-- Persistent context vs. conversation history
-- Structured data vs. natural language
-- Completeness vs. flexibility balance
+#### Infrastructure Patterns: Where Specifications Live
+
+**Spec-driven development uses existing development infrastructure:**
+
+**1. Version Control (Git)**
+
+Specifications live in the same repository as code:
+
+```
+project-root/
+├── .specs/
+│   ├── features/
+│   │   ├── password-reset.md
+│   │   ├── user-auth.md
+│   │   └── payment-processing.md
+│   ├── architecture/
+│   │   ├── api-design.md
+│   │   └── database-schema.md
+│   └── templates/
+│       └── feature-spec-template.md
+├── src/
+│   └── [code implementation]
+├── tests/
+│   └── [test files]
+└── README.md
+```
+
+**Why in git:**
+- Version history (track spec evolution)
+- Code review (PR process for spec changes)
+- Blame/attribution (who specified this requirement?)
+- Branching (feature branches include spec + code)
+
+**GitHub Spec Kit Approach:**
+Uses `.github/specs/` directory for discoverability.
+
+---
+
+**2. Integration with CI/CD**
+
+Specifications can integrate with automation:
+
+**Automated Spec Validation:**
+```yaml
+# .github/workflows/spec-validation.yml
+name: Validate Specifications
+
+on: [pull_request]
+
+jobs:
+  validate-specs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check spec completeness
+        run: |
+          # Verify all features have specs
+          # Verify specs have required sections
+          # Verify acceptance criteria are testable
+          ./scripts/validate-specs.sh
+```
+
+**Spec-to-Test Generation:**
+```yaml
+# Generate test stubs from acceptance criteria
+- name: Generate test templates
+  run: |
+    spec-kit generate-tests .specs/features/
+```
+
+**Implementation Verification:**
+```yaml
+# Compare implementation against spec
+- name: Verify spec compliance
+  run: |
+    spec-kit verify --spec .specs/ --code src/
+```
+
+---
+
+**3. Tool Integration**
+
+Specifications integrate with development tools:
+
+**GitHub Spec Kit:** Commands within IDE or terminal
+```bash
+# In project directory
+specify init                    # Initialize spec-driven project
+specify create feature-name     # Create new feature spec from template
+specify plan feature-name       # Generate technical plan from spec
+specify tasks feature-name      # Generate task breakdown
+```
+
+**AWS Kiro:** Web-based interface
+- Upload existing codebase
+- Write specs in web UI or import Markdown
+- Kiro generates plan and tasks
+- Review and approve before implementation
+
+**Claude Code / Cursor / Other Agents:**
+```
+# In chat
+Read the specification in .specs/features/password-reset.md
+and implement according to the technical plan.
+```
+
+---
+
+####Context Engineering Principles
+
+**How to write specifications that AI agents understand effectively:**
+
+**1. Persistent Context vs. Conversation History**
+
+**Problem with Conversation History:**
+```
+Turn 1: "Build a login feature"
+Turn 2: "Add rate limiting"
+Turn 3: "Oh, make it 5 attempts not 3"
+Turn 4: "Wait, I meant per 15 minutes, not per hour"
+Turn 5: "Actually..."
+```
+**Context:** Spread across 5+ conversation turns. Easy to lose details. Hard to review.
+
+**Specification Approach:**
+```markdown
+## Login Feature
+
+### Rate Limiting
+- 5 failed attempts per email address
+- 15-minute lockout window
+- Reset counter on successful login
+```
+**Context:** Single source of truth. All details in one place. Easy to review and update.
+
+---
+
+**2. Structured Data vs. Natural Language**
+
+**AI agents work best with structured formats:**
+
+❌ **Pure Natural Language:**
+```
+Users should be able to log in with their email and password.
+We need to make sure the password is strong. Also, we should
+probably limit how many times they can try. Security is important.
+```
+
+✅ **Structured:**
+```markdown
+## Authentication Requirements
+
+### Functional
+- Email + password authentication
+- Session persistence ("Remember me" checkbox)
+
+### Security
+- Password complexity: 12+ chars, mixed case, numbers, symbols
+- Rate limiting: 5 attempts per 15 minutes
+- Bcrypt hashing (salt rounds = 12)
+
+### Acceptance Criteria
+- [ ] Valid credentials → 200 + session token
+- [ ] Invalid credentials → 401 + generic error
+- [ ] 6th failed attempt → 429 + lockout message
+```
+
+**Why it works:** AI can parse sections. Humans can scan quickly. Structure reduces ambiguity.
+
+---
+
+**3. Completeness vs. Flexibility Balance**
+
+**Too Vague:**
+```markdown
+## Payment Feature
+- Users can pay for stuff
+```
+**Problem:** AI doesn't know what "stuff" means, what payment methods, what happens on failure.
+
+**Too Specific:**
+```markdown
+## Payment Feature
+- Button at coordinates (742px, 391px) from top-left
+- Button width: 203.5px, height: 44.2px
+- Border radius: 8.314px
+- Background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+- On hover: transform: translateY(-1.2px); box-shadow: 0 4.8px 12.4px...
+[500 more lines of CSS details]
+```
+**Problem:** Over-specified. Brittle. AI has no room for good defaults.
+
+**Right Balance:**
+```markdown
+## Payment Feature
+- Stripe integration for credit card processing
+- Support Visa, Mastercard, Amex
+- Display error messages for failed payments (insufficient funds, expired card)
+- Email receipt on successful payment
+- Refund capability within 30 days
+
+### Acceptance Criteria
+- [ ] Successful payment charges card and sends receipt
+- [ ] Failed payment shows user-friendly error
+- [ ] Refunds process within 24 hours
+```
+**Sweet Spot:** Defines "what" and "why", leaves "how" to AI (or human developer).
+
+---
+
+**4. Acceptance Criteria as Tests**
+
+Write acceptance criteria that map directly to tests:
+
+**Specification:**
+```markdown
+### Acceptance Criteria
+- [ ] Returns 200 + JWT token on valid credentials
+- [ ] Returns 401 on invalid credentials
+- [ ] Returns 429 after 5 failed attempts within 15 minutes
+- [ ] Token expires after 24 hours
+```
+
+**AI-Generated Tests:**
+```javascript
+describe('Authentication', () => {
+  test('returns 200 + JWT on valid credentials', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'user@example.com', password: 'ValidP@ssw0rd!' });
+    expect(response.status).toBe(200);
+    expect(response.body.token).toBeDefined();
+  });
+
+  test('returns 401 on invalid credentials', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'user@example.com', password: 'WrongPassword' });
+    expect(response.status).toBe(401);
+  });
+
+  // ... more tests mapping to acceptance criteria
+});
+```
+
+**The Pattern:** Acceptance criteria = test cases. AI can generate tests directly from spec.
+
+---
 
 #### Integration with Existing Workflows
-[Content: How spec-driven fits with agile, scrum, existing dev processes]
+
+**Spec-driven development fits into agile/scrum workflows:**
+
+**Sprint Planning:**
+- Product owner writes user stories (as usual)
+- **New step:** Convert stories to specifications (30-45 min per feature)
+- Specifications reviewed in planning meeting
+- Team estimates based on approved specs
+
+**Development:**
+- Developer picks spec from sprint backlog
+- Run `/plan` and `/tasks` commands (or do manually)
+- Implement with AI assistance
+- Code review includes "does this match the spec?"
+
+**Testing:**
+- QA team uses acceptance criteria as test cases
+- Automated tests generated from specs
+- Spec becomes regression test documentation
+
+**Retrospective:**
+- "Were specs helpful or overhead?" feedback
+- Iterate on spec template and process
+
+---
+
+**Integration with Existing Tools:**
+
+**Jira / Linear / Issue Tracking:**
+```
+[PROJ-123] Password Reset Feature
+- Specification: .specs/features/password-reset.md
+- Implementation: PR #456
+- Status: In Review
+```
+
+**Confluence / Notion / Documentation:**
+- Specifications can be auto-published to docs
+- Keeps documentation in sync with code
+
+**Slack / Teams / Communication:**
+- Bot notifications: "Spec updated for password-reset feature"
+- `/spec password-reset` command shows current spec
+
+---
+
+**Does This Scale?**
+
+**Team Sizes:**
+- **1-5 developers:** Specs in markdown files, manual processes
+- **5-20 developers:** GitHub Spec Kit or similar, some automation
+- **20-100 developers:** AWS Kiro or enterprise platform, full automation
+- **100+ developers:** Dedicated spec review team, automated validation, integration with all tools
+
+**The Key:** Start simple (Markdown + git), add tooling as team grows.
+
+---
+
+**The Technical Reality:**
+
+Spec-driven development **uses existing infrastructure**:
+- ✅ Version control you already have (git)
+- ✅ Code review you already do (PRs)
+- ✅ CI/CD you already use (GitHub Actions, etc.)
+- ✅ Project management you already have (Jira, etc.)
+
+**You're not replacing your workflow. You're adding a specification step before implementation.**
+
+**The Integration:**
+Traditional: User Story → Code → Test → Deploy
+**Spec-Driven:** User Story → **Specification** → Plan → Tasks → Code → Test → Deploy
+
+One additional step (specification), but prevents hours of debugging and rework.
+
+---
+
+## Section 2 Complete: Understanding Spec-Driven Development
+
+You now understand:
+- ✅ What spec-driven development is and why it emerged (2.1)
+- ✅ The 5-stage evolution of AI-assisted development (2.2)
+- ✅ When to use each approach (manual, autocomplete, vibe, agentic, spec-driven) (2.3)
+- ✅ The 5 enterprise pain points driving adoption (2.4)
+- ✅ Honest pros/cons and decision framework (2.5)
+- ✅ The four-phase workflow with concrete example (2.6)
+- ✅ Why specs remain valuable as AI evolves (2.7)
+- ✅ How specs integrate technically with tools and workflows (2.8)
+
+**Next:** Section 3 examines the evidence base—the quantitative research, data, and frameworks supporting (and questioning) spec-driven development.
 
 ---
 
