@@ -592,27 +592,253 @@ These approaches aren't competing—they're complementary tools in your toolkit:
 
 ### 2.4 Why Enterprises Are Looking at Spec-Driven Development
 
-[Content: Specific pain points driving enterprise interest]
+Enterprise interest in spec-driven development is surging in 2025, driven by five specific pain points that unstructured AI code generation creates at scale:
+
+---
 
 #### Pain Point 1: Quality Crisis at Scale
-**Problem:** [Content: Code generation outpacing review capacity, technical debt accumulation]
-**Spec-Driven Solution:** [Content: Specifications as quality gates, structured review process]
+
+**The Problem:**
+
+AI agents can generate code faster than humans can review it. This creates a dangerous bottleneck:
+
+- **Generation rate:** 1,000 lines/hour (AI agents)
+- **Review rate:** 200 lines/hour (experienced developers)
+- **Result:** 5:1 backlog of unreviewed code
+
+**Real Data:**
+- GitClear 211M line analysis: 7% code churn (up from 5% in 2021)
+- Code duplication up 48% (8.3% → 12.3%)
+- Refactoring down 60% (25% → <10% of commits)
+- Clone blocks (5+ line duplicates) up 8x in 2 years
+
+**What This Means:**
+Technical debt is accumulating faster than manual coding ever produced. Teams are "going fast" but quality is degrading. The house is filling with cracks while everyone celebrates how quickly new rooms are being added.
+
+**The Spec-Driven Solution:**
+
+Specifications act as quality gates *before* implementation:
+
+1. **Review spec, not code** (30 min vs. 3 hours)
+2. **Acceptance criteria** defined upfront (testable, measurable)
+3. **Edge cases** documented before coding
+4. **Architecture decisions** made deliberately, not by AI default
+
+**Outcome:** 1 iteration instead of 8. Spec takes 30 min to write, but prevents hours of debugging and refactoring.
+
+**Evidence:** Teams using structured approaches show 300% better maintainability and 85% fewer security vulnerabilities.
+
+---
 
 #### Pain Point 2: Governance & Compliance
-**Problem:** [Content: No audit trail for AI decisions, compliance verification challenges]
-**Spec-Driven Solution:** [Content: Specifications as compliance documentation, persistent record]
+
+**The Problem:**
+
+Conversation history doesn't satisfy compliance requirements:
+
+- **SOC2 audits:** "Show me why this code handles user data this way"
+- **Answer:** "Um, I asked ChatGPT and it suggested this approach?"
+- **Auditor:** "Where's the documentation? Who approved this design?"
+- **Answer:** "It's in a conversation thread from 3 weeks ago... I think..."
+
+**Compliance Gaps:**
+- No audit trail for AI-generated code decisions
+- Can't demonstrate "why we built it this way"
+- Unable to verify compliance requirements were considered
+- No persistent record of security considerations
+- GDPR, HIPAA, SOC2, PCI-DSS all require documentation
+
+**Enterprise Survey (a16z, 100 CIOs):**
+Top concerns with AI coding tools:
+1. Limited connectivity to proprietary repos (security)
+2. Minimal customization for compliance
+3. Fragmented SLAs and accountability
+4. No audit trail capabilities
+
+**The Spec-Driven Solution:**
+
+Specifications become compliance documentation:
+
+1. **Audit trail:** Spec documents all requirements, including compliance
+2. **Review process:** Spec reviewed by security/compliance before implementation
+3. **Persistent record:** Version-controlled, timestamped, attributed
+4. **Verification:** Compare implementation against spec for compliance validation
+
+**Example Specification Section:**
+```markdown
+### Compliance Requirements
+- HIPAA: PHI encrypted at rest (AES-256) and in transit (TLS 1.3)
+- GDPR: User data deletion within 30 days of request
+- SOC2: All data access logged with user ID, timestamp, action
+- Audit trail: Retain logs for 7 years per regulatory requirement
+```
+
+Then auditors can review spec *and* verify implementation matches.
+
+**Outcome:** Specs serve dual purpose—guide AI AND satisfy auditors.
+
+---
 
 #### Pain Point 3: Onboarding & Context
-**Problem:** [Content: Conversation history doesn't transfer, context pain increases with seniority]
-**Spec-Driven Solution:** [Content: Specifications as persistent project knowledge]
+
+**The Problem:**
+
+Conversation history doesn't scale or transfer:
+
+**Scenario 1: New Developer Joins**
+- Developer 1: "Why does this API endpoint work this way?"
+- Developer 2: "Oh, I asked Claude about it 6 weeks ago... let me try to find that conversation..."
+- Developer 1: "What were the edge cases you considered?"
+- Developer 2: "I... don't remember. The AI suggested this approach and it worked."
+
+**Scenario 2: Switching AI Tools**
+- Team using Cursor, wants to try Claude Code
+- All context is in Cursor conversation history
+- Can't transfer context to new tool
+- Start from scratch or manually reconstruct requirements
+
+**Research Finding:**
+Context pain increases with seniority:
+- Junior developers: 41% report context challenges
+- Senior developers: 52% report context challenges
+
+Why? Senior devs work on more complex projects with more context to manage.
+
+**The Spec-Driven Solution:**
+
+Specifications are persistent project knowledge:
+
+1. **Onboard new developers:** Read spec to understand "what" and "why"
+2. **Switch tools:** Spec works with any AI agent (GitHub Spec Kit supports 15+)
+3. **Resume after breaks:** Spec captures decisions that survive sessions
+4. **Team coordination:** Spec is single source of truth
+
+**Example:**
+Developer takes 2-week vacation. Returns to project. Instead of:
+❌ "What did the AI do while I was gone? Why did it make these choices?"
+
+They do:
+✅ Read updated specification → Understand changes → Continue work
+
+**Outcome:** Specifications become institutional knowledge, not locked in individual developers' conversation histories.
+
+---
 
 #### Pain Point 4: Skills Gap
-**Problem:** [Content: Developers don't know how to work effectively with AI agents]
-**Spec-Driven Solution:** [Content: Structured framework for AI interaction, trainable approach]
+
+**The Problem:**
+
+Developers don't know how to work effectively with AI agents:
+
+**Survey Data (2025):**
+- 26% of developers cite "improved contextual understanding" as top improvement need
+- 2 out of 3 software firms with GenAI tools see low developer adoption
+- Rigorous studies found AI increased completion time by 19% for experienced developers
+
+**Why?**
+- Prompt engineering is a new skill
+- Context engineering is poorly understood
+- No training frameworks exist
+- "Vibe it" isn't a scalable teaching method
+
+**Real Example:**
+- Junior developer asks AI to "build authentication"
+- AI generates insecure code (passwords in plaintext, no rate limiting)
+- Junior dev doesn't know enough to recognize problems
+- Insecure code ships to production
+
+**The Spec-Driven Solution:**
+
+Structured framework provides trainable approach:
+
+1. **Template-based:** Specification templates teach what to include
+2. **Reviewable:** Seniors review specs before juniors implement
+3. **Learnable:** Clear progression from spec quality to implementation quality
+4. **Transferable:** Skills transfer across AI tools (agent-agnostic)
+
+**Training Program:**
+- Week 1: Write specifications for existing features (learn by documenting)
+- Week 2: Write specs for new features, senior reviews
+- Week 3: Implement from approved specs using AI
+- Week 4: Review spec quality vs. implementation outcomes
+
+**Outcome:** Developers learn "context engineering" through structured practice, not trial-and-error.
+
+---
 
 #### Pain Point 5: Rapid AI Agent Evolution
-**Problem:** [Content: New tools every month, no standard approach, team fragmentation]
-**Spec-Driven Solution:** [Content: Agent-agnostic specifications (GitHub Spec Kit works with 15+ agents)]
+
+**The Problem:**
+
+New tools launching constantly creates fragmentation:
+
+**2024-2025 Landscape:**
+- 15+ AI coding platforms launched
+- New models every few months (GPT-4, Claude 3.5, Gemini 2.0)
+- Teams using multiple tools simultaneously
+- No standard approach across organization
+
+**Enterprise Challenges:**
+- **Vendor lock-in risk:** What if we build everything for Cursor and they shut down?
+- **Tool fragmentation:** Developers using different tools can't share context
+- **Training overhead:** Learning new tool every 6 months
+- **Investment uncertainty:** Should we bet on Claude Code or Cursor or Copilot?
+
+**The Spec-Driven Solution:**
+
+Agent-agnostic specifications solve vendor lock-in:
+
+**GitHub Spec Kit Example:**
+- Same specification works with 15+ agents:
+  - GitHub Copilot
+  - Claude Code
+  - Cursor
+  - Gemini CLI
+  - Windsurf
+  - Amazon Q Developer
+  - Cline
+  - And more...
+
+**Workflow:**
+1. Write specification (tool-independent)
+2. Use any AI agent to implement
+3. Switch tools tomorrow if needed
+4. Specification remains source of truth
+
+**Real Scenario:**
+- Monday: Use Claude Code for backend API (great at system-level tasks)
+- Tuesday: Use Cursor for frontend (great VS Code integration)
+- Wednesday: Use Copilot for tests (great at repetitive patterns)
+- Same specifications work with all three tools
+
+**Outcome:** Invest in specifications, not specific tools. As AI capabilities improve, you can upgrade agents without rewriting requirements.
+
+---
+
+**The Enterprise Imperative**
+
+These five pain points compound as teams scale:
+
+| Team Size | Impact |
+|-----------|--------|
+| 1-5 devs | Manageable with vibe coding, conversation history sufficient |
+| 5-20 devs | Context transfer problems emerge, quality concerns surface |
+| 20-50 devs | **Critical:** Governance required, compliance mandatory, onboarding costly |
+| 50+ devs | **Essential:** Spec-driven becomes infrastructure, not optional |
+
+**The Thoughtworks Assessment:**
+
+Status: "Assess" (November 2025) - worth exploring cautiously
+
+Why cautious? Emerging practice, tool maturity concerns, risk of over-specification.
+
+But also: The only current framework addressing enterprise governance needs for AI coding at scale.
+
+**The Bottom Line:**
+
+Enterprises aren't adopting spec-driven development because it's trendy. They're adopting it because unstructured AI code generation creates quality, governance, context, skills, and vendor lock-in problems that become critical at scale.
+
+Spec-driven development is the governance response to autonomous AI agents.
 
 ### 2.5 Pros and Cons: Is Spec-Driven Right for You?
 
