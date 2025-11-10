@@ -108,8 +108,15 @@ spec-driven-dev-research/
 2. **The Challenge: Speed vs. Sustainability** (3 pages)
    - 95% AI codebases, GitClear quality crisis data, enterprise pain points
 
-3. **Understanding Spec-Driven Development** (4 pages)
-   - Four-phase workflow, vibe coding vs. spec-driven, technical architecture
+3. **Understanding Spec-Driven Development** (4-5 pages) ⭐ **ENHANCED**
+   - **2.1** What is it? (definition, examples, why now)
+   - **2.2** Evolution of AI coding (5 stages: manual → autocomplete → vibe → agentic → spec-driven)
+   - **2.3** Comparing all approaches (when to use each)
+   - **2.4** Why enterprises care (5 pain points driving adoption)
+   - **2.5** Pros & cons + decision framework (is it right for you?)
+   - **2.6** Four-phase workflow explained (with examples)
+   - **2.7** Spec-driven in rapidly evolving AI landscape
+   - **2.8** Technical architecture & context engineering
 
 4. **The Evidence Base** (3 pages)
    - Quantitative data, DORA + SPACE metrics, Thoughtworks assessment
@@ -129,7 +136,7 @@ spec-driven-dev-research/
 9. **Appendices**
    - Tool comparison, spec templates, metrics, glossary, references
 
-**Target:** 15-20 pages Markdown, technical depth balanced with governance focus
+**Target:** 18-22 pages Markdown, technical depth balanced with governance focus
 
 ---
 
