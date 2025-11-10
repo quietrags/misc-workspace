@@ -1,0 +1,388 @@
+# Research Sources Bibliography
+# Last Updated: 2025-11-10
+# Format: YAML for structured citation tracking
+# Each source requires: title, url, date_accessed, date_published, source_type, quality_rating, key_claims
+
+---
+
+# Primary Sources - Enterprise & Industry Research
+
+- title: "GitClear 2025 AI Code Quality Research"
+  url: "https://www.gitclear.com/coding_on_copilot_data_shows_ais_downward_pressure_on_code_quality"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Industry Research"
+  quality_rating: "High - 211M lines analyzed"
+  key_claims:
+    - "Code churn projected at 7% by 2025"
+    - "Refactoring declined from 25% (2021) to <10% (2024)"
+    - "Code duplication rose 8.3% to 12.3% (2020-2024)"
+    - "Clone blocks: 8x increase in 5+ line duplicates"
+  verification_status: "Verified - large dataset"
+  notes: "Correlation with AI adoption, not proven causation"
+
+- title: "Thoughtworks Technology Radar - Volume 31"
+  url: "https://www.thoughtworks.com/radar"
+  date_accessed: "2025-11-10"
+  date_published: "2025-11"
+  source_type: "Industry Assessment"
+  quality_rating: "High - Expert consensus"
+  key_claims:
+    - "Spec-driven development status: Assess"
+    - "Concerns: elaborate workflows, task-dependent performance"
+    - "Risk: reverting to waterfall antipatterns"
+    - "Quote: 'Handcrafting detailed rules for AI ultimately doesn't scale'"
+  verification_status: "Verified - official Thoughtworks Radar"
+  notes: "Balanced, cautious assessment of emerging practice"
+
+- title: "McKinsey State of AI 2025"
+  url: "[To be verified]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Consulting Firm Survey"
+  quality_rating: "High"
+  key_claims:
+    - "85% of organizations using AI agents in at least one workflow"
+  verification_status: "Needs URL verification"
+  notes: "Enterprise adoption statistics"
+
+- title: "Bain & Company: From Pilots to Payoff - Generative AI in Software Development"
+  url: "[To be verified]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Consulting Firm Research"
+  quality_rating: "High"
+  key_claims:
+    - "ROI challenges: time saved not redirected to higher-value work"
+    - "Skills gap as primary barrier"
+  verification_status: "Needs URL verification"
+  notes: "Focus on enterprise GenAI adoption challenges"
+
+- title: "Andreessen Horowitz Enterprise AI Survey - 100 CIOs"
+  url: "[To be verified]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "VC Firm Survey"
+  quality_rating: "Medium-High"
+  key_claims:
+    - "Limited connectivity to proprietary repos"
+    - "Minimal customization"
+    - "Shallow task coverage"
+    - "Fragmented SLAs"
+  verification_status: "Needs URL verification"
+  notes: "VP/CIO pain points with current tools"
+
+---
+
+# Platform Documentation - Official Sources
+
+- title: "AWS Kiro Documentation"
+  url: "https://kiro.aws.amazon.com"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Product Documentation"
+  quality_rating: "Authoritative"
+  key_claims:
+    - "Three-phase workflow: Specify → Plan → Execute"
+    - "Enterprise security: KMS, IAM, role-based access"
+    - "Brownfield support for existing codebases"
+  verification_status: "Official AWS documentation"
+  notes: "Enterprise platform for spec-driven development"
+
+- title: "GitHub Spec Kit Repository"
+  url: "https://github.com/github/spec-kit"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Open Source Repository"
+  quality_rating: "Authoritative"
+  key_claims:
+    - "Compatible with 15+ AI agents"
+    - "Commands: /specify, /plan, /tasks"
+    - "Configurable prompts, immutable constitution"
+  verification_status: "Official GitHub repository"
+  notes: "Multi-agent specification framework"
+
+- title: "GitHub Copilot Workspace Documentation"
+  url: "[GitHub docs URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2024-2025"
+  source_type: "Product Documentation"
+  quality_rating: "Authoritative"
+  key_claims:
+    - "Built-in specification-first workflow"
+    - "Auto-generates spec → plan → file changes"
+    - "Mixed results on complex problems"
+  verification_status: "Needs URL verification"
+  notes: "GitHub's native spec-driven IDE"
+
+- title: "Claude Code Documentation"
+  url: "https://docs.claude.com/claude-code"
+  date_accessed: "2025-11-10"
+  date_published: "2024-2025"
+  source_type: "Product Documentation"
+  quality_rating: "Authoritative"
+  key_claims:
+    - "Terminal-first agentic AI"
+    - "Parallel agent execution"
+    - "MCP (Model Context Protocol) support"
+  verification_status: "Official Anthropic documentation"
+  notes: "Integrates with Spec Kit, custom workflows"
+
+---
+
+# Industry Blogs & Thought Leadership
+
+- title: "Den Delimarsky: The ONLY guide you'll need for GitHub Spec Kit"
+  url: "[YouTube/blog URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Tutorial/Educational Content"
+  quality_rating: "High - detailed technical walkthrough"
+  key_claims:
+    - "Comprehensive Spec Kit implementation guide"
+    - "Real-world usage patterns"
+  verification_status: "Needs URL verification"
+  notes: "Community expert on spec-driven development"
+
+- title: "Red Hat Developer: Spec-Driven Development Article"
+  url: "[To be verified]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Developer Education"
+  quality_rating: "Medium-High"
+  key_claims:
+    - "Four-phase workflow explanation"
+    - "Comparison to traditional approaches"
+  verification_status: "Needs URL verification"
+  notes: "Developer-focused introduction"
+
+- title: "Andrej Karpathy: Vibe Coding Concept"
+  url: "[Twitter/blog URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2025-02"
+  source_type: "Industry Commentary"
+  quality_rating: "High - thought leader"
+  key_claims:
+    - "Coined term 'vibe coding'"
+    - "Iterative, conversational approach to AI coding"
+    - "Contrasts with spec-driven approach"
+  verification_status: "Needs URL verification"
+  notes: "Influential AI researcher perspective"
+
+---
+
+# Academic & Research Papers
+
+- title: "DORA (DevOps Research and Assessment) State of DevOps Reports"
+  url: "https://dora.dev"
+  date_accessed: "2025-11-10"
+  date_published: "2014-2025 (yearly)"
+  source_type: "Academic/Industry Research"
+  quality_rating: "High - multi-year longitudinal study"
+  key_claims:
+    - "Four key metrics: deployment frequency, lead time, MTTR, change failure rate"
+    - "Correlation with business outcomes"
+  verification_status: "Verified - authoritative source"
+  notes: "Industry-standard DevOps metrics"
+
+- title: "SPACE Framework: The SPACE of Developer Productivity"
+  url: "[Academic paper URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2021"
+  source_type: "Peer-Reviewed Research"
+  quality_rating: "High"
+  authors: "GitHub, Microsoft, University of Victoria researchers"
+  key_claims:
+    - "Five dimensions: Satisfaction, Performance, Activity, Communication, Efficiency"
+    - "Holistic productivity measurement"
+  verification_status: "Needs URL verification"
+  notes: "Complements DORA with team health signals"
+
+- title: "Rich Sutton: The Bitter Lesson"
+  url: "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+  date_accessed: "2025-11-10"
+  date_published: "2019"
+  source_type: "Essay/Research"
+  quality_rating: "High - influential AI research"
+  key_claims:
+    - "AI improves more from compute/data than human-coded knowledge"
+    - "Handcrafting rules doesn't scale"
+  verification_status: "Verified - classic AI essay"
+  notes: "Referenced by Thoughtworks in spec-driven critique"
+
+---
+
+# Vendor Claims & Statistics
+
+- title: "GitHub Copilot Productivity Research"
+  url: "[GitHub research blog URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2024"
+  source_type: "Vendor Research"
+  quality_rating: "Medium - vendor study, not peer-reviewed"
+  key_claims:
+    - "55% faster task completion vs manual coding"
+    - "15M+ users globally"
+    - "Copilot Studio: 230K+ organizations"
+  verification_status: "Needs URL verification"
+  notes: "Industry study, self-reported by GitHub"
+
+- title: "Y Combinator Winter 2025 Cohort Announcements"
+  url: "[YC blog/announcement URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Industry Observation"
+  quality_rating: "Medium - anecdotal, not rigorous study"
+  key_claims:
+    - "25% of startups with 95% AI-generated codebases"
+    - "Fastest-growing batch in YC history (10% per week)"
+  verification_status: "Needs URL verification"
+  notes: "Self-reported by startups, correlation not causation"
+
+- title: "Nagarro Fluidic Intelligence Documentation"
+  url: "[Internal Nagarro docs]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Internal Documentation"
+  quality_rating: "Authoritative for Nagarro"
+  key_claims:
+    - "20% measurable productivity gains"
+    - "Integration with AI platforms (Ginger AI, Genome AI)"
+  verification_status: "Internal verification needed"
+  notes: "Nagarro's existing AI approach"
+
+---
+
+# Market Research & Statistics
+
+- title: "AI Coding Tools Market Size Research"
+  url: "[Market research firm URL]"
+  date_accessed: "2025-11-10"
+  date_published: "2025"
+  source_type: "Market Research"
+  quality_rating: "Medium - projected figures"
+  key_claims:
+    - "$7.38B market size (2025)"
+    - "$103.6B projected by 2032"
+    - "~40% CAGR"
+  verification_status: "Needs source verification"
+  notes: "Market projections, not actuals"
+
+---
+
+# Research Gaps - To Be Filled
+
+- title: "[Experienced Developer Performance Study]"
+  claim: "AI tools increased completion time by 19% for experienced developers"
+  status: "NEEDS VERIFICATION"
+  notes: "Cited in research but source not identified"
+
+- title: "[Enterprise Adoption Study]"
+  claim: "2 out of 3 software firms with GenAI tools see low developer adoption"
+  status: "NEEDS VERIFICATION"
+  notes: "Need original source"
+
+- title: "[Structured Prompts Effectiveness Study]"
+  claim: "1 iteration with structured prompts = 8 iterations without"
+  status: "NEEDS VERIFICATION"
+  notes: "Compelling claim but needs rigorous source"
+
+- title: "[Context Pain by Seniority Study]"
+  claim: "Context pain: 41% (junior) vs 52% (senior developers)"
+  status: "NEEDS VERIFICATION"
+  notes: "Needs original research source"
+
+- title: "[Developer Improvement Needs Survey]"
+  claim: "26% cite 'improved contextual understanding' as top need"
+  status: "NEEDS VERIFICATION"
+  notes: "Likely from developer survey, need source"
+
+---
+
+# Source Quality Ratings Defined
+
+quality_ratings:
+  High: "Peer-reviewed research, large datasets, authoritative documentation"
+  Medium-High: "Industry surveys, expert assessments, vendor research with methodology"
+  Medium: "Vendor claims, self-reported data, anecdotal evidence"
+  Low: "Unverified claims, marketing materials, speculative"
+
+verification_status:
+  Verified: "URL confirmed, claim validated, date checked"
+  Needs_Verification: "Claim documented but source/URL needs confirmation"
+  Disputed: "Contradictory evidence exists"
+
+---
+
+# Update Log
+
+updates:
+  - date: "2025-11-10"
+    action: "Initial bibliography creation"
+    sources_added: 20+
+    sources_needing_verification: 12
+    next_steps:
+      - "Verify all [To be verified] URLs"
+      - "Track down sources for research gaps"
+      - "Add academic papers if published"
+      - "Monthly update cycle established"
+
+  - date: "2025-12-10"
+    action: "First monthly update (planned)"
+    tasks:
+      - "Verify outstanding URLs"
+      - "Add new research published in November"
+      - "Update adoption statistics"
+      - "Track Thoughtworks Radar updates"
+
+---
+
+# Citation Style Guide
+
+# When citing in documents, use this format:
+
+# Format for research:
+# "[Claim]" (Source Name, Year)
+# Example: "Code churn projected at 7%" (GitClear, 2025)
+
+# Format for statistics:
+# "[Statistic]: Source (Date)"
+# Example: "15M+ Copilot users: GitHub (2025)"
+
+# Format for quotes:
+# > "[Quote]"
+# > — Source, Publication (Year)
+
+# Always include date_accessed for all web sources
+# Track verification status for all claims
+# Flag disputed or contradictory evidence
+
+---
+
+# Next Research Priorities
+
+priorities:
+  high:
+    - "Verify all GitClear claims with direct source links"
+    - "Find academic peer-reviewed studies on spec-driven development"
+    - "Document Nagarro client case studies (when available)"
+    - "Track AWS Kiro customer success stories"
+
+  medium:
+    - "Interview developers using spec-driven approaches"
+    - "Gather qualitative feedback from GitHub Spec Kit community"
+    - "Monitor DORA/SPACE metric research updates"
+
+  low:
+    - "Track emerging tools and platforms"
+    - "Monitor conference talks and presentations"
+    - "Aggregate blog post perspectives"
+
+---
+
+# Version
+
+version: "1.0"
+last_updated: "2025-11-10"
+next_review: "2025-12-10"
+maintained_by: "Nagarro Spec-Driven Development Research Project"
