@@ -3048,21 +3048,68 @@ You now understand:
 
 ### 4.3 AI-Native IDE Integration
 
-#### Claude Code
+**The Developer Experience Layer**
 
-[Content: Terminal-first agentic AI, parallel agents, Spec Kit integration, adoption statistics]
+Spec-driven development requires AI agents capable of multi-step reasoning. These AI-native IDEs integrate specifications into developer workflows.
 
-#### Cursor
+#### Claude Code (Anthropic, 2024-2025)
 
-[Content: VS Code fork, Agent Mode, Cmd+K/Cmd+I workflows]
+**Architecture**: Terminal-first agentic AI with parallel agent execution
 
-#### Cline
+**Spec Kit Integration**: Native `/specify`, `/plan`, `/tasks` commands
 
-[Content: VS Code extension, unique Plan/Act phases with different models]
+**Strengths**:
+- Parallel agent execution (run multiple tasks simultaneously)
+- MCP (Model Context Protocol) support for extensibility
+- Terminal-native (fits developer workflows)
+- Strong at complex, multi-file refactoring
+
+**Adoption**: Growing rapidly among developers who prefer terminal-first workflows
+
+**Best For**: Backend engineers, infrastructure teams, complex refactoring projects
+
+---
+
+#### Cursor (Anysphere, 2023-2025)
+
+**Architecture**: VS Code fork with AI deeply integrated
+
+**Workflows**:
+- **Cmd+K**: Inline code generation
+- **Cmd+I**: Chat-based coding assistance
+- **Agent Mode**: Autonomous multi-step execution
+
+**Strengths**:
+- Familiar VS Code interface (low learning curve)
+- Excellent inline code suggestions
+- Strong at feature implementation with clear requirements
+
+**Adoption**: One of the most widely adopted AI-native IDEs
+
+**Best For**: Full-stack developers, teams wanting minimal workflow disruption
+
+---
+
+#### Cline (VS Code Extension, 2024-2025)
+
+**Architecture**: VS Code extension with dual-model approach
+
+**Unique Feature**: Separate models for **Plan** phase (reasoning) and **Act** phase (implementation)
+
+**Strengths**:
+- Works within existing VS Code setup (extension, not fork)
+- Plan/Act separation improves quality for complex tasks
+- Open-source community contributions
+
+**Best For**: Teams wanting to experiment without switching IDEs
+
+---
 
 ### 4.4 Tool Selection Criteria Matrix
 
-[Content: Decision framework based on team size, brownfield vs greenfield, security requirements, scale]
+**How to Choose: Decision Framework**
+
+Select tools based on your specific context. No universal "best" choice exists.
 
 | Criteria | AWS Kiro | GitHub Spec Kit | Claude Code + Spec Kit | Cursor |
 |----------|----------|-----------------|------------------------|--------|
@@ -3071,6 +3118,57 @@ You now understand:
 | **Setup Time** | 2-3 weeks | < 1 day | < 1 day | < 1 hour |
 | **AWS Integration** | Native | N/A | Good | N/A |
 | **Cost** | Enterprise pricing | Free (OSS) | Usage-based | Subscription |
+| **Team Size Sweet Spot** | 50-500+ devs | 5-50 devs | 10-100 devs | 1-50 devs |
+| **Governance** | Built-in | DIY | Moderate | Basic |
+| **Agent Portability** | Locked | 15+ agents | Multiple | Single |
+
+**Selection Guidance**:
+
+**Choose AWS Kiro if**:
+- ✅ Enterprise scale (50+ developers)
+- ✅ Deep AWS integration required
+- ✅ Brownfield codebase needs support
+- ✅ Budget for enterprise tooling
+- ✅ 2-3 week implementation acceptable
+
+**Choose GitHub Spec Kit if**:
+- ✅ Want agent portability (not vendor-locked)
+- ✅ Open-source preference
+- ✅ Small to mid-size team (5-50 developers)
+- ✅ Technical team comfortable with DIY setup
+- ✅ Budget constraints
+
+**Choose Claude Code + Spec Kit if**:
+- ✅ Terminal-first workflow preference
+- ✅ Complex refactoring needs
+- ✅ Backend/infrastructure focus
+- ✅ Want parallel agent execution
+- ✅ Mid-size team (10-100 developers)
+
+**Choose Cursor if**:
+- ✅ VS Code users (minimal learning curve)
+- ✅ Need fast team adoption
+- ✅ Full-stack development focus
+- ✅ Small to mid-size team (1-50 developers)
+- ✅ Want polished developer experience
+
+**Hybrid Approach** (Recommended):
+Many teams use multiple tools:
+- Cursor for feature development (fast, familiar)
+- Claude Code for complex refactoring (powerful, multi-step)
+- GitHub Spec Kit for specifications (agent-agnostic)
+
+This prevents vendor lock-in and matches tools to tasks.
+
+---
+
+## Section 4 Complete: Tools Landscape
+
+You now understand the major platforms (AWS Kiro, GitHub Copilot Workspace), open-source frameworks (GitHub Spec Kit, cc-sdd), AI-native IDEs (Claude Code, Cursor, Cline), and how to select tools based on your context.
+
+**Key Insight**: No universal "best" tool. Choose based on team size, brownfield vs greenfield, security requirements, and budget. Hybrid approach recommended.
+
+**Next**: Section 5 covers implementation—readiness assessment, phased adoption, and governance integration.
 
 ---
 
