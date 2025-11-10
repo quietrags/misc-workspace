@@ -842,69 +842,234 @@ Spec-driven development is the governance response to autonomous AI agents.
 
 ### 2.5 Pros and Cons: Is Spec-Driven Right for You?
 
-[Content: Honest assessment with decision framework]
+Every approach has tradeoffs. Here's an honest assessment to help you decide if spec-driven development fits your context.
+
+---
 
 #### Advantages ✅
 
 **Quality & Maintainability**
-- [Content: 300% better maintainability, 85% fewer vulnerabilities data]
-- [Content: Reduced technical debt, higher refactoring rates]
+
+The evidence is compelling:
+- **300% better maintainability** in structured approaches (industry research)
+- **85% fewer security vulnerabilities** with governance frameworks
+- **Reduced code churn**: From 7% (unstructured AI) to <3% (structured)
+- **Higher refactoring rates**: Maintaining code quality over time
+
+**Why?** Specifications force architectural thinking upfront. Edge cases are documented before implementation, not discovered in production. Review happens on specs (30 min) instead of code (3 hours).
+
+**Real Impact:** Team ships feature in 1 iteration instead of 8. Technical debt doesn't accumulate invisibly.
+
+---
 
 **Governance & Compliance**
-- [Content: Audit trails, compliance documentation, security verification]
+
+Specifications provide what conversation history can't:
+- **Audit trails**: Version-controlled, timestamped, attributed decisions
+- **Compliance documentation**: HIPAA, GDPR, SOC2, PCI-DSS requirements documented
+- **Security verification**: Review security considerations before code exists
+- **Accountability**: Clear record of "what was specified" vs. "what was implemented"
+
+**Real Impact:** Pass SOC2 audits. Demonstrate due diligence to regulators. Security teams review specs, not just code.
+
+---
 
 **Persistent Context**
-- [Content: Specifications survive beyond conversation history]
-- [Content: Onboarding new team members or AI agents]
+
+Conversation history disappears. Specifications persist:
+- **Survive sessions**: Work resumes after weeks/months
+- **Onboard developers**: New team members read specs to understand "why"
+- **Transfer knowledge**: Institutional knowledge, not individual memory
+- **Context for AI**: New AI agent? Give it the spec, not conversation history
+
+**Real Impact:** Developer takes vacation. Returns. Reads updated spec. Continues work. No "what did the AI do while I was gone?" panic.
+
+---
 
 **Measurement & Accountability**
-- [Content: Clear success criteria, specification vs implementation comparison]
+
+Specifications enable objective measurement:
+- **Clear success criteria**: Defined before implementation, testable after
+- **Spec vs. implementation comparison**: Did we build what we specified?
+- **Progress tracking**: Tasks map to spec sections
+- **Quality metrics**: Measure spec completeness, acceptance criteria coverage
+
+**Real Impact:** Product manager asks "are we done?" Answer: "Yes, all acceptance criteria met" (not "I think so?").
+
+---
 
 **Agent Portability**
-- [Content: Not locked into one AI tool, specifications work across platforms]
+
+Not locked into one AI tool:
+- **GitHub Spec Kit**: Works with 15+ agents (Copilot, Claude Code, Cursor, Gemini CLI, etc.)
+- **Tool independence**: Switch AI agents without rewriting requirements
+- **Future-proof**: As AI improves, specifications remain valuable
+- **Multi-tool workflows**: Use different agents for different tasks with same specs
+
+**Real Impact:** Monday use Claude Code (backend), Tuesday use Cursor (frontend), Wednesday use Copilot (tests). Same specifications throughout.
+
+---
 
 #### Disadvantages / Challenges ⚠️
 
 **Upfront Investment**
-- [Content: Time to write specifications, learning curve for teams]
-- [Content: 1 structured iteration = 8 unstructured, but requires initial setup]
+
+Writing specifications takes time:
+- **30-60 minutes** per feature (vs. 5 min to start vibe coding)
+- **Learning curve**: Template familiarity, what to include/exclude
+- **Cultural shift**: "We don't have time to write specs" resistance
+- **Short-term slowdown**: Feels slower initially (payoff comes later)
+
+**The Math:** 1 structured iteration = 8 unstructured iterations. But you invest 30 min upfront. If you're building a throwaway prototype, that's wasted time.
+
+**When it hurts:** Weekend hackathon, rapid prototype, exploring new library, learning new framework.
+
+---
 
 **Risk of Over-Specification**
-- [Content: Thoughtworks concern about reverting to waterfall]
-- [Content: Need to balance structure with agility]
+
+Thoughtworks Technology Radar concern (November 2025):
+> "Risk of reverting to heavy up-front specification and big-bang releases"
+
+**The Waterfall Trap:**
+- Spending weeks perfecting specifications
+- Specifications become rigid contracts, not living documents
+- Losing agility to bureaucracy
+- "We can't start coding until all specs are approved by 5 committees"
+
+**The Balance:**
+- ✅ Enough structure for quality and governance
+- ❌ Not so much that you lose iteration speed
+
+**How to avoid:** Treat specs as living documents. Update as you learn. Start implementation with "good enough" spec, refine as needed.
+
+---
 
 **Tool Maturity**
-- [Content: Thoughtworks "Assess" status, emerging practice]
-- [Content: Best practices still evolving, limited case studies]
+
+This is an emerging practice (2025):
+- **Thoughtworks status: "Assess"** (not "Trial" or "Adopt")
+- **Limited case studies**: Mostly early adopters, not widespread
+- **Best practices evolving**: What should specs include? How detailed?
+- **Platform maturity**: GitHub Spec Kit is months old, AWS Kiro launched 2025
+
+**Real Risk:** You're an early adopter. You'll encounter rough edges. You'll help define best practices, not follow established playbook.
+
+**Mitigation:** Start small. Pilot with 1-2 teams. Learn. Iterate on your spec templates. Don't bet the entire company on it yet.
+
+---
 
 **Not Universal**
-- [Content: Vibe coding may be better for MVPs, exploration]
-- [Content: Autocomplete sufficient for simple boilerplate]
+
+Spec-driven isn't the right tool for every job:
+- **MVPs/Prototypes**: Vibe coding is faster (and throwaway anyway)
+- **Simple boilerplate**: Autocomplete is sufficient
+- **Learning/Exploration**: Conversation is better for "teach me X"
+- **Debugging**: Conversational problem-solving often more efficient
+
+**The Mistake:** "We use spec-driven for everything now!"
+**The Reality:** Use spec-driven for production systems. Use vibe coding for exploration. Use autocomplete for boilerplate.
+
+---
 
 **The "Bitter Lesson" Risk**
-- [Content: Rich Sutton's concern - handcrafting rules may not scale as AI improves]
-- [Content: Balance: enough structure for governance, not so much it becomes brittle]
+
+Rich Sutton's influential 2019 essay "The Bitter Lesson":
+> "The biggest lesson from AI research: general methods that leverage computation are ultimately more effective than methods that leverage human knowledge."
+
+**The Concern:** As AI gets better, handcrafted specifications may become unnecessary overhead. Why specify edge cases if AI will figure them out anyway?
+
+**Counter-argument:**
+- Governance needs don't disappear (compliance, audit trails)
+- Quality verification still required (even if AI is better)
+- Human accountability matters (someone must define "what to build")
+
+**The Balance:**
+- Don't over-specify implementation details (let AI figure out "how")
+- Do specify outcomes, constraints, compliance (human decisions)
+- Specs should be "what" not "how" (leave room for AI creativity)
+
+---
 
 #### Decision Framework: Should You Adopt Spec-Driven?
 
-**High Fit ✅**
-- Production systems with quality/compliance requirements
-- Teams of 10+ developers
-- Regulated industries (healthcare, finance)
-- Brownfield codebases requiring maintainability
-- Enterprise governance requirements
+**Assess Your Context:**
 
-**Medium Fit ⚡**
-- Mixed workload (production + prototypes)
-- Growing teams (5-10 developers)
-- Quality concerns emerging with current AI usage
-- Some compliance requirements
+**High Fit ✅ — Strongly Recommend**
 
-**Low Fit / Use Alternatives ❌**
-- Early-stage startups prioritizing speed over everything
-- Prototypes and MVPs
-- Very small teams (1-3 developers)
-- Projects with extreme time pressure and low compliance needs
+You should adopt spec-driven development if you have:
+- ✅ **Production systems** with users relying on quality
+- ✅ **Teams of 10+ developers** (coordination and context transfer critical)
+- ✅ **Regulated industries** (healthcare, finance, government)
+- ✅ **Compliance requirements** (SOC2, HIPAA, GDPR, PCI-DSS)
+- ✅ **Brownfield codebases** requiring maintainability over years
+- ✅ **Enterprise governance** mandates
+- ✅ **Quality over speed** as organizational priority
+- ✅ **Long-term projects** (code maintained for 3+ years)
+
+**Real Example:** Healthcare SaaS company with 50 developers, HIPAA compliance, 10-year roadmap → **Perfect fit**
+
+---
+
+**Medium Fit ⚡ — Pilot and Assess**
+
+Consider adopting if you have:
+- ⚡ **Mixed workload** (production + prototypes)
+- ⚡ **Growing teams** (5-10 developers, scaling fast)
+- ⚡ **Quality concerns emerging** with current AI usage
+- ⚡ **Some compliance** requirements (not fully regulated)
+- ⚡ **Technical debt** accumulating from vibe coding
+- ⚡ **Context transfer** problems between developers
+
+**Recommendation:** Start with 30-day pilot. 1-2 teams. Production features only. Measure DORA + quality metrics. Decide based on data.
+
+**Real Example:** Series A startup, 8 developers, growing fast, recent production bugs from AI-generated code → **Try pilot**
+
+---
+
+**Low Fit / Use Alternatives ❌ — Stick with Other Approaches**
+
+Spec-driven probably isn't right if you have:
+- ❌ **Early-stage startups** prioritizing speed over everything (pre-product-market fit)
+- ❌ **Prototypes and MVPs** (throwaway code, learning phase)
+- ❌ **Very small teams** (1-3 developers, everyone knows context)
+- ❌ **Extreme time pressure** with low compliance needs
+- ❌ **Exploratory projects** (research, experimentation)
+- ❌ **No AI usage yet** (adopt AI first, add structure later if needed)
+
+**Better Alternatives:** Vibe coding for MVPs, AI autocomplete for small teams, manual coding for novel algorithms.
+
+**Real Example:** Weekend hackathon, solo developer learning new framework → **Vibe coding is fine**
+
+---
+
+**The Decision Question:**
+
+**Ask yourself:** "What's the cost of a bug in production?"
+
+- **Low cost** (internal tool, no users yet, easy to fix) → Vibe coding is fine
+- **Medium cost** (some users, reputation risk, moderate impact) → Consider spec-driven
+- **High cost** (regulated, financial/health data, compliance violations, user harm) → **Spec-driven essential**
+
+---
+
+**The Honest Assessment:**
+
+Spec-driven development is **not a silver bullet**. It's a governance framework for AI coding. It trades upfront investment for long-term quality, compliance, and maintainability.
+
+**It's right for you if:**
+- Quality and governance matter more than raw speed
+- Technical debt is a concern, not an afterthought
+- You're building production systems, not prototypes
+- Your team is large enough that context transfer matters
+
+**It's wrong for you if:**
+- You're in rapid exploration/learning mode
+- Speed is the only metric that matters
+- Your project is small/temporary/throwaway
+- You haven't adopted AI coding tools yet
+
+**The Pragmatic Approach:** Use spec-driven for production. Use vibe coding for exploration. Use both contextually.
 
 ### 2.6 The Four-Phase Workflow Explained
 
