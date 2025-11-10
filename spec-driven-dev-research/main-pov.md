@@ -1073,27 +1073,370 @@ Spec-driven development is **not a silver bullet**. It's a governance framework 
 
 ### 2.6 The Four-Phase Workflow Explained
 
-[Content: Detailed walkthrough with concrete examples]
+The spec-driven workflow follows a structured progression: Specify → Plan → Tasks → Implement. Let's walk through each phase with a concrete example.
 
-#### Phase 1: Specify
-[Content: Define WHAT should be built - requirements, user stories, acceptance criteria, edge cases]
+**Running Example:** Building a password reset feature for a SaaS application
 
-**Example:** [Content: Real specification example for a feature]
+---
 
-#### Phase 2: Plan
-[Content: Translate intent into HOW - architecture, tech stack, constraints, approach]
+#### Phase 1: Specify — Define WHAT
 
-**Example:** [Content: Technical plan derived from specification above]
+**Goal:** Document requirements, user stories, acceptance criteria, and edge cases **before** any code exists.
 
-#### Phase 3: Tasks
-[Content: Break plan into reviewable units - task decomposition, dependencies]
+**Specification: Password Reset Feature**
 
-**Example:** [Content: Task breakdown from plan above]
+```markdown
+## Feature: Self-Service Password Reset
 
-#### Phase 4: Implement
-[Content: AI agent executes with human oversight - review gates, testing, iteration]
+### User Stories
 
-**Example:** [Content: Implementation workflow with review points]
+**As a** user who forgot their password
+**I want** to reset it via email
+**So that** I can regain access to my account without contacting support
+
+### Requirements
+
+**Functional:**
+- User enters email address on /forgot-password page
+- System sends reset link to email (if account exists)
+- Reset link valid for 1 hour
+- User clicks link, redirected to /reset-password with token
+- User enters new password (must meet complexity requirements)
+- Password updated, user logged in automatically
+
+**Security:**
+- No indication if email exists/doesn't exist (prevent enumeration)
+- Tokens cryptographically secure (UUID v4 minimum)
+- One-time use tokens (invalidate after use)
+- Rate limiting: 3 reset requests per email per hour
+- Password requirements: 12+ chars, uppercase, lowercase, number, symbol
+
+**Non-Functional:**
+- Email delivery within 30 seconds
+- Token validation response < 200ms
+- Works on mobile and desktop
+
+### Acceptance Criteria
+
+- [ ] Valid email receives reset link within 30 seconds
+- [ ] Invalid email shows same message (no enumeration)
+- [ ] Reset link works within 1 hour window
+- [ ] Expired link shows clear error message
+- [ ] Used token cannot be reused
+- [ ] New password meets complexity requirements
+- [ ] Weak password rejected with helpful error
+- [ ] Success redirects to dashboard, user logged in
+- [ ] Rate limiting blocks 4th request within hour
+
+### Edge Cases
+
+1. **User requests reset, then resets via old method (admin)**
+   - Behavior: Invalidate all pending reset tokens for that user
+
+2. **User requests multiple resets**
+   - Behavior: Each new request invalidates previous tokens, sends new email
+
+3. **Token clicked after password already reset**
+   - Behavior: Show "This link has been used" message, offer new reset
+
+4. **User has no email on file**
+   - Behavior: Same "check your email" message (no enumeration)
+
+5. **Email service down**
+   - Behavior: Queue email, retry 3 times, log failure, alert ops team
+
+### Out of Scope
+
+- ❌ SMS-based reset (future feature)
+- ❌ Security questions
+- ❌ Biometric reset
+```
+
+**Time to Write:** 30-45 minutes
+
+**Review:** Product manager, security lead, and senior developer review spec. Spot missing edge case: "What if user changes email between request and reset?" Add to spec. **Approved.**
+
+---
+
+#### Phase 2: Plan — Translate to HOW
+
+**Goal:** AI agent (or human) creates technical plan based on specification.
+
+**Command:** `/plan` (in GitHub Spec Kit or AWS Kiro)
+
+**AI-Generated Technical Plan:**
+
+```markdown
+## Technical Plan: Password Reset Implementation
+
+### Architecture Approach
+
+**Pattern:** Token-based stateless reset with database persistence
+
+**Components:**
+1. API endpoints (POST /api/auth/forgot-password, POST /api/auth/reset-password)
+2. Token generation and validation service
+3. Email service integration
+4. Rate limiting middleware
+5. Password validation utility
+
+### Technology Stack
+
+- **Backend:** Node.js + Express
+- **Database:** PostgreSQL (password_reset_tokens table)
+- **Email:** SendGrid API
+- **Rate Limiting:** Redis
+- **Password Hashing:** bcrypt (salt rounds = 12)
+- **Token:** crypto.randomUUID()
+
+### Database Schema
+
+**New Table:** `password_reset_tokens`
+```sql
+CREATE TABLE password_reset_tokens (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  token VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  expires_at TIMESTAMP NOT NULL,
+  used_at TIMESTAMP NULL,
+  ip_address INET
+);
+
+CREATE INDEX idx_token ON password_reset_tokens(token);
+CREATE INDEX idx_user_id_created ON password_reset_tokens(user_id, created_at);
+```
+
+### API Design
+
+**POST /api/auth/forgot-password**
+Request:
+```json
+{ "email": "user@example.com" }
+```
+Response (always 200):
+```json
+{ "message": "If that email exists, you'll receive a reset link shortly" }
+```
+
+**POST /api/auth/reset-password**
+Request:
+```json
+{
+  "token": "uuid-here",
+  "newPassword": "SecureP@ssw0rd!"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "sessionToken": "jwt-token-here"
+}
+```
+
+### Security Controls
+
+- Helmet.js for security headers
+- CORS restricted to allowed origins
+- SQL injection prevention (parameterized queries)
+- XSS prevention (input sanitization)
+- CSRF tokens on form submissions
+
+### Error Handling
+
+- Generic messages (prevent enumeration)
+- Detailed logging for ops (include user_id, IP, timestamp)
+- Alert on rate limit violations (potential attack)
+
+### Testing Strategy
+
+- Unit tests: Token generation, validation, expiry logic
+- Integration tests: API endpoints, database interactions
+- Security tests: Enumeration attempts, token reuse, rate limiting
+- Load tests: 100 concurrent reset requests
+
+### Constraints
+
+- SendGrid rate limit: 100 emails/hour (free tier)
+- Token expiry: 1 hour (configurable via env var)
+- Redis TTL matches rate limit window (1 hour)
+```
+
+**Review:** Technical lead reviews plan. Approves. Notes: "Good choice on Redis for rate limiting."
+
+---
+
+#### Phase 3: Tasks — Break into Reviewable Units
+
+**Goal:** Decompose plan into specific, testable tasks.
+
+**Command:** `/tasks` (in GitHub Spec Kit)
+
+**AI-Generated Task List:**
+
+```markdown
+## Implementation Tasks
+
+### Task 1: Database Setup
+- [ ] Create migration for `password_reset_tokens` table
+- [ ] Add indexes for performance
+- [ ] Test migration rollback
+**Estimate:** 1 hour
+**Dependencies:** None
+
+### Task 2: Token Service
+- [ ] Implement `generateResetToken(userId)` function
+- [ ] Implement `validateToken(token)` function
+- [ ] Implement `invalidateToken(token)` function
+- [ ] Implement `invalidateAllUserTokens(userId)` function
+- [ ] Unit tests for all functions
+**Estimate:** 3 hours
+**Dependencies:** Task 1
+
+### Task 3: Rate Limiting Middleware
+- [ ] Implement Redis-backed rate limiter
+- [ ] 3 requests per hour per email
+- [ ] Return 429 on limit exceeded
+- [ ] Unit tests
+**Estimate:** 2 hours
+**Dependencies:** None
+
+### Task 4: Forgot Password Endpoint
+- [ ] POST /api/auth/forgot-password route
+- [ ] Look up user by email (constant-time)
+- [ ] Generate token, save to database
+- [ ] Send email via SendGrid
+- [ ] Integration tests
+**Estimate:** 3 hours
+**Dependencies:** Task 2, Task 3
+
+### Task 5: Reset Password Endpoint
+- [ ] POST /api/auth/reset-password route
+- [ ] Validate token (exists, not expired, not used)
+- [ ] Validate new password (complexity requirements)
+- [ ] Update user password (bcrypt hash)
+- [ ] Invalidate token
+- [ ] Generate session token (JWT)
+- [ ] Integration tests
+**Estimate:** 3 hours
+**Dependencies:** Task 2
+
+### Task 6: Email Templates
+- [ ] HTML email template for reset link
+- [ ] Plain text fallback
+- [ ] Include expiry time in email
+- [ ] Test rendering in multiple clients
+**Estimate:** 2 hours
+**Dependencies:** None
+
+### Task 7: Security Testing
+- [ ] Test enumeration prevention
+- [ ] Test token reuse prevention
+- [ ] Test rate limiting
+- [ ] Test expired token handling
+- [ ] Penetration testing
+**Estimate:** 4 hours
+**Dependencies:** Task 4, Task 5
+
+### Task 8: Documentation
+- [ ] API documentation
+- [ ] Runbook for ops (handling SendGrid failures)
+- [ ] Update user-facing docs
+**Estimate:** 2 hours
+**Dependencies:** All above
+
+**Total Estimate:** 20 hours (2.5 days)
+```
+
+**Review:** Senior developer reviews tasks. Notes: "Don't forget to test the email queueing retry logic." Adds Task 6.5. **Approved.**
+
+---
+
+#### Phase 4: Implement — Execute with Oversight
+
+**Goal:** AI agent implements tasks with human review gates.
+
+**Workflow:**
+
+1. **Task Assignment:**
+   - Developer: "Claude, implement Task 1: Database Setup"
+   - AI agent reads specification + plan + task details
+
+2. **Implementation:**
+   ```sql
+   -- migrations/20250111_add_password_reset_tokens.sql
+   CREATE TABLE password_reset_tokens (
+     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+     user_id INT REFERENCES users(id) ON DELETE CASCADE,
+     token VARCHAR(255) UNIQUE NOT NULL,
+     created_at TIMESTAMP DEFAULT NOW(),
+     expires_at TIMESTAMP NOT NULL,
+     used_at TIMESTAMP NULL,
+     ip_address INET
+   );
+
+   CREATE INDEX idx_token ON password_reset_tokens(token);
+   CREATE INDEX idx_user_id_created ON password_reset_tokens(user_id, created_at);
+   ```
+
+3. **Review Gate:**
+   - Developer reviews migration
+   - Tests locally: `npm run migrate:up && npm run migrate:down`
+   - ✅ Approved, merge to main
+
+4. **Next Task:**
+   - Developer: "Claude, implement Task 2: Token Service"
+   - AI generates `services/passwordResetToken.js` with all 4 functions + tests
+   - Developer runs tests: `npm test services/passwordResetToken.test.js`
+   - All tests pass ✅
+
+5. **Integration Testing (Task 4-5):**
+   - AI implements both endpoints
+   - Developer runs integration test suite
+   - Finds bug: "Token not invalidated on successful reset"
+   - Developer: "Claude, fix bug in Task 5 - token must be invalidated after use"
+   - AI fixes, tests pass ✅
+
+6. **Security Review (Task 7):**
+   - Security lead runs enumeration tests
+   - Confirms no information leakage
+   - Tests rate limiting with 10 rapid requests
+   - ✅ Approved
+
+7. **Deployment:**
+   - Feature flag: `password_reset_enabled=false` initially
+   - Deploy to staging, run smoke tests
+   - Deploy to production, flip flag to true for 10% of users
+   - Monitor for 24 hours
+   - Roll out to 100%
+
+**Total Time:**
+- Specification writing: 45 min
+- Plan review: 15 min
+- Task breakdown: 15 min
+- Implementation: 18 hours (tasks + fixes)
+- Reviews: 2 hours
+- **Total: ~21 hours (vs. estimated 20)**
+
+**Compare to Vibe Coding:**
+- No spec: Start coding immediately (save 45 min upfront)
+- Discover edge cases during testing (3 hours debugging)
+- Miss security requirement (2 hours to add later)
+- Re-implement endpoint after PM feedback (4 hours)
+- **Total: ~27 hours + security vulnerability shipped temporarily**
+
+---
+
+**Key Workflow Principles:**
+
+1. **Specifications are reviewed before code** (catch issues early)
+2. **Plans are validated by experts** (architecture review upfront)
+3. **Tasks are bite-sized** (1-4 hours each, easy to review)
+4. **Implementation has review gates** (human oversight at key points)
+5. **Testing is specified, not optional** (acceptance criteria are tests)
+
+**The Result:** Feature shipped in 1 iteration, no surprises, security validated, PM happy.
 
 ### 2.7 Spec-Driven in the Context of Rapidly Evolving AI Agents
 
