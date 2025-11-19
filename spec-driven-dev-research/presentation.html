@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spec-Driven Development with AI - A Journey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Monochromatic Grayscale Palette */
+            --gray-50: #FAFAFA;
+            --gray-100: #F5F5F5;
+            --gray-200: #E5E5E5;
+            --gray-300: #D4D4D4;
+            --gray-400: #A3A3A3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            --black: #000000;
+            --white: #FFFFFF;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        /* Responsive container */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .reveal {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Modern typography */
+        .reveal {
+            font-family: var(--font-primary);
+            font-size: 28px;
+            color: var(--gray-800);
+            font-weight: 400;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            color: var(--black);
+            text-transform: none;
+            font-weight: 600;
+            margin-bottom: 0.5em;
+        }
+
+        .reveal h1 {
+            font-size: 2em;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .reveal h2 {
+            font-size: 1.6em;
+            border-bottom: 2px solid var(--gray-300);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .reveal h3 {
+            font-size: 1.2em;
+            color: var(--gray-900);
+            font-weight: 600;
+        }
+
+        /* Slide layout */
+        .reveal .slides {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .reveal .slides section {
+            text-align: left;
+            padding: 20px 40px 60px 40px;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--white);
+        }
+
+        /* Hide non-active slides during transitions */
+        .reveal .slides section.past,
+        .reveal .slides section.future {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        .reveal .title-slide {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Code blocks */
+        .reveal pre {
+            font-size: 0.55em;
+            line-height: 1.4;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+
+        .reveal code {
+            font-family: var(--font-mono);
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--gray-900);
+        }
+
+        /* Tables */
+        .reveal table {
+            font-size: 0.65em;
+            margin: 20px 0;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .reveal table th {
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 12px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .reveal table td {
+            padding: 10px 12px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+        }
+
+        .reveal table tr:nth-child(even) td {
+            background: var(--gray-50);
+        }
+
+        /* Unified callout component (replaces info-box, warning-box, success-box) */
+        .callout, .info-box, .warning-box, .success-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+            border-left: 3px solid var(--gray-800);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        /* Two column layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        /* Three column layout */
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        /* Card components */
+        .card {
+            background: var(--white);
+            border-radius: 4px;
+            padding: 20px;
+            border: 1px solid var(--gray-300);
+        }
+
+        /* Lists */
+        .reveal ul, .reveal ol {
+            font-size: 0.8em;
+            line-height: 1.6;
+            margin-left: 0;
+        }
+
+        .reveal li {
+            margin: 8px 0;
+        }
+
+        .reveal li::marker {
+            color: var(--gray-800);
+        }
+
+        /* Diagrams and visual elements */
+        .workflow-step {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+            font-size: 0.75em;
+        }
+
+        .workflow-step::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            font-size: 1.5em;
+            color: var(--gray-800);
+            margin-top: 10px;
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        /* Metrics display */
+        .metric {
+            display: inline-block;
+            background: var(--gray-100);
+            padding: 15px 25px;
+            border-radius: 4px;
+            border: 1px solid var(--gray-300);
+            margin: 10px;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--black);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: var(--gray-700);
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Comparison boxes */
+        .compare-box {
+            padding: 20px;
+            border-radius: 4px;
+            margin: 10px 0;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+        }
+
+        .compare-box.bad {
+            border-left: 3px solid var(--gray-800);
+        }
+
+        .compare-box.good {
+            border-left: 3px solid var(--gray-800);
+        }
+
+        /* Split screen for comparisons */
+        .split-screen {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+            min-height: 300px;
+        }
+
+        .split-screen-left, .split-screen-right {
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--gray-300);
+        }
+
+        .split-screen-left {
+            background: var(--gray-50);
+            border-left: 3px solid var(--gray-800);
+        }
+
+        .split-screen-right {
+            background: var(--gray-50);
+            border-left: 3px solid var(--gray-800);
+        }
+
+        /* Transition slides */
+        .transition-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 400px;
+        }
+
+        .big-question {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--black);
+            line-height: 1.4;
+            padding: 40px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+        }
+
+        /* Small text */
+        .small-text {
+            font-size: 0.6em;
+            color: var(--gray-600);
+            font-style: italic;
+        }
+
+        /* Technical diagrams */
+        .architecture-box {
+            background: var(--gray-50);
+            border: 1px dashed var(--gray-400);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 0.7em;
+            font-family: var(--font-mono);
+        }
+
+        /* Graph/chart visuals */
+        .trend-graph {
+            position: relative;
+            height: 200px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .graph-arrow-up {
+            color: var(--gray-800);
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .graph-arrow-down {
+            color: var(--gray-800);
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        /* Progressive reveal elements */
+        .fragment-fade-in {
+            opacity: 0;
+        }
+
+        .fragment-fade-in.visible {
+            opacity: 1;
+            transition: opacity 0.5s ease-in;
+        }
+
+        /* Narrative paragraph styling */
+        .narrative {
+            font-size: 0.85em;
+            line-height: 1.7;
+            margin: 20px 0;
+            color: var(--gray-800);
+        }
+
+        .narrative em {
+            background: var(--gray-200);
+            padding: 2px 4px;
+            font-style: normal;
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        /* Custom scrollbar styling */
+        .reveal .slides section::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .reveal .slides section::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .reveal .slides section::-webkit-scrollbar-thumb {
+            background: var(--gray-400);
+            border-radius: 10px;
+            border: 2px solid var(--gray-100);
+        }
+
+        .reveal .slides section::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-600);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .reveal {
+                font-size: 24px;
+            }
+
+            .two-column, .three-column, .split-screen {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .reveal {
+                font-size: 20px;
+            }
+
+            .reveal .slides section {
+                padding: 15px 20px 60px 20px;
+            }
+        }
+
+        /* Footer */
+        .slide-footer {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            font-size: 0.5em;
+            color: var(--gray-600);
+        }
+
+        /* Accent elements */
+        .accent {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: var(--gray-200);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--black);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section class="title-slide">
+                <h1>Spec-Driven Development<br>with AI Coding Agents</h1>
+                <h3 style="color: var(--gray-900); margin-top: 40px;">A Journey Through the AI Coding Landscape</h3>
+                <p style="margin-top: 60px; font-size: 0.8em; color: var(--gray-600);">
+                    Evidence-Based Analysis for Engineering Leaders<br>
+                    Version 1.0 | November 2025
+                </p>
+                <aside class="notes">
+                    This isn't a product pitch—it's a journey through the AI coding landscape. We'll explore real data, examine what's working and what isn't, and help you make an informed decision about whether spec-driven development fits your context.
+                </aside>
+            </section>
+
+            <!-- Slide 2: The Promise (NEW - Opening Hook) -->
+            <section>
+                <h2>The Promise</h2>
+
+                <p class="narrative" style="font-size: 1em; margin-bottom: 30px;">
+                    Imagine this scenario: <em>Your team's velocity doubles overnight.</em> Developers ship features in hours instead of days. GitHub Copilot writes the boilerplate. Claude handles the refactoring. Your sprint demos are packed with completed work.
+                </p>
+
+                <div class="split-screen">
+                    <div class="split-screen-left">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">The Vision 🎯</h3>
+                        <ul style="font-size: 0.75em; margin: 15px 0 0 20px;">
+                            <li><strong>55% faster</strong> task completion</li>
+                            <li><strong>15M developers</strong> already using AI tools</li>
+                            <li><strong>Velocity graphs</strong> trending upward</li>
+                            <li><strong>Sprint capacity</strong> effectively doubled</li>
+                            <li><strong>Engineering efficiency</strong> transformed</li>
+                        </ul>
+                        <p style="font-size: 0.7em; margin-top: 20px; font-style: italic;">
+                            This is real. GitHub Copilot's data shows 55% speed improvement. The promise is delivering.
+                        </p>
+                    </div>
+
+                    <div class="split-screen-right">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">The Reality ⚠️</h3>
+                        <ul style="font-size: 0.75em; margin: 15px 0 0 20px;">
+                            <li><strong>Three months later:</strong> More time debugging than coding</li>
+                            <li><strong>Code reviews</strong> taking 3x longer (AI generates 300 lines/min, you review 250 lines/hour)</li>
+                            <li><strong>Production incidents</strong> increasing</li>
+                            <li><strong>Tech debt</strong> accumulating faster than ever</li>
+                            <li><strong>Team morale</strong> slipping</li>
+                        </ul>
+                        <p style="font-size: 0.7em; margin-top: 20px; font-weight: 600;">
+                            What happened? How did velocity gains turn into quality problems?
+                        </p>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Start with empathy—your audience has likely experienced both sides of this story. The promise is real (55% speed gains are measured data), but the reality often includes unexpected consequences. This split-screen visual immediately shows the tension we're exploring. Don't answer the question yet—let it hang. Build curiosity.
+                </aside>
+            </section>
+
+            <!-- Slide 3: The 2025 Landscape (REVISED - Narrative Escalation) -->
+            <section>
+                <h2>The 2025 AI Coding Landscape</h2>
+
+                <p class="narrative">
+                    Let's step back and look at the bigger picture. The AI coding revolution isn't a future prediction—it's happening right now, at scale.
+                </p>
+
+                <div class="trend-graph" style="text-align: center;">
+                    <div style="display: flex; justify-content: space-around; align-items: center; height: 100%;">
+                        <div>
+                            <div class="metric-value">$7.4B</div>
+                            <div style="font-size: 0.7em; margin-top: 10px;">2025 Market Size</div>
+                            <div class="graph-arrow-up">↗</div>
+                        </div>
+                        <div>
+                            <div class="metric-value">$103.6B</div>
+                            <div style="font-size: 0.7em; margin-top: 10px;">2032 Projected</div>
+                            <div style="font-size: 0.8em; margin-top: 10px; color: var(--gray-800);">~40% CAGR</div>
+                        </div>
+                        <div>
+                            <div class="metric-value">15M+</div>
+                            <div style="font-size: 0.7em; margin-top: 10px;">Developers Using AI</div>
+                            <div style="font-size: 0.8em; margin-top: 10px;">(Copilot alone)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 30px;">
+                    But here's where it gets interesting. <span class="highlight">85% of organizations</span> now have AI agents in at least one workflow (McKinsey). Y Combinator's W25 batch includes startups with <span class="highlight">95% AI-generated codebases</span> shipping to production. Your competitors are already doing this.
+                </p>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>The Escalation:</strong> This isn't about whether to adopt AI coding—that decision is already made. The question is: <em>How do you adopt it without sacrificing the quality that got you here?</em>
+                </div>
+
+                <p class="small-text">
+                    Sources: GitHub (2024), McKinsey State of AI 2025, Y Combinator W25 cohort analysis
+                </p>
+
+                <aside class="notes">
+                    Build momentum. The market data isn't just statistics—it's evidence of a fundamental shift. The 40% CAGR signals investor confidence. The 15M developers signal mainstream adoption. The YC startups signal competitive pressure. Frame this as: "Your competitors are moving. Standing still is not neutral—it's falling behind." Then redirect: the question isn't WHETHER to use AI, but HOW to use it responsibly.
+                </aside>
+            </section>
+
+            <!-- Slide 4A: The Unexpected Discovery - Study Introduction -->
+            <section>
+                <h2>The Unexpected Discovery</h2>
+
+                <p class="narrative">
+                    In 2024, researchers at GitClear decided to investigate a question no one had rigorously answered: <em>Is AI-generated code actually improving our codebases, or just making them bigger faster?</em>
+                </p>
+
+                <p class="narrative">
+                    They analyzed <strong style="color: var(--black);">211 million lines of code</strong> across thousands of projects from 2020-2024. What they found shocked the industry.
+                </p>
+
+                <div class="callout" style="margin-top: 30px;">
+                    <strong>The Study Timeline:</strong>
+                    <ul style="margin: 10px 0 0 20px; font-size: 0.85em;">
+                        <li><strong>2020-2021 (Baseline):</strong> Pre-AI coding, stable quality metrics</li>
+                        <li><strong>2022-2023 (Autocomplete Era):</strong> Minor changes, mostly positive</li>
+                        <li><strong>2023-2024 (Autonomous Agent Era):</strong> Sharp quality degradation</li>
+                    </ul>
+                </div>
+
+                <aside class="notes">
+                    Introduce the GitClear study as credible research (211M lines is massive dataset). The timeline creates suspense—quality was stable, then degraded sharply in 2023-2024 (autonomous agent era). Set up the reveal of the actual metrics on the next slide.
+                </aside>
+            </section>
+
+            <!-- Slide 4B: The Unexpected Discovery - Metrics & Interpretation -->
+            <section>
+                <h2>The Unexpected Discovery: Quality Metrics</h2>
+
+                <p class="narrative">
+                    Here's what the GitClear study revealed about code quality during the AI adoption timeline:
+                </p>
+
+                <table style="margin-top: 30px;">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>What It Measures</th>
+                            <th>2020-2021</th>
+                            <th>2024</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fragment">
+                            <td><strong>Code Churn</strong></td>
+                            <td>Code rewritten within 2 weeks</td>
+                            <td>2-3%</td>
+                            <td>7%</td>
+                            <td style="font-weight: 700;">+133% ↑</td>
+                        </tr>
+                        <tr class="fragment">
+                            <td><strong>Refactoring Time</strong></td>
+                            <td>Developer time improving code structure</td>
+                            <td>25%</td>
+                            <td>&lt;10%</td>
+                            <td style="font-weight: 700;">-60% ↓</td>
+                        </tr>
+                        <tr class="fragment">
+                            <td><strong>Code Duplication</strong></td>
+                            <td>% of codebase with duplicated logic</td>
+                            <td>8.3%</td>
+                            <td>12.3%</td>
+                            <td style="font-weight: 700;">+48% ↑</td>
+                        </tr>
+                        <tr class="fragment">
+                            <td><strong>Clone Blocks</strong></td>
+                            <td>Identical 5+ line code segments</td>
+                            <td>Baseline</td>
+                            <td>8x increase</td>
+                            <td style="font-weight: 700;">+800% ↑</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="narrative" style="margin-top: 30px;">
+                    <span class="highlight">Code churn up 133%.</span> That means your team is rewriting code within two weeks of shipping it—at more than double the historical rate.
+                    <span class="highlight">Duplication up 48%.</span> AI is regenerating the same patterns because it can't see what already exists.
+                    <span class="highlight">Clone blocks up 800%.</span> Eight times more copy-pasted code fragments.
+                </p>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>Important Context:</strong> This is <em>correlation</em> with AI adoption timeline, not proven causation. Multiple factors changed 2020-2024 (remote work, team turnover, release cadence). But the timing is striking.
+                </div>
+
+                <p class="small-text">Source: GitClear (2025) - "Coding on Copilot: Data Shows AI's Downward Pressure on Code Quality"</p>
+
+                <aside class="notes">
+                    Use progressive reveal (fragments) to build tension. Don't show all metrics at once. Reveal one, let it sink in, reveal the next. The narrative interpretation after the table is critical—translate metrics into human impact. "Code churn" is abstract; "rewriting code within two weeks" is concrete. The correlation caveat is essential for credibility—acknowledge uncertainty. But the timing correlation (2022-2023 minor, 2023-2024 sharp) is the smoking gun.
+                </aside>
+            </section>
+
+            <!-- Slide 5: The Moment of Recognition (NEW - Transition) -->
+            <section>
+                <div class="transition-slide">
+                    <div class="big-question">
+                        Is AI coding broken?<br>
+                        <span style="font-size: 0.7em; margin-top: 20px; display: block;">Or are we using it wrong?</span>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Pause here. Let the question hang. This is the pivot point where we shift from problem escalation to investigation. The answer (spoiler: we're using it wrong) becomes the foundation for everything that follows. This sparse slide gives the audience a moment to reflect before we dive into root cause analysis.
+                </aside>
+            </section>
+
+            <!-- Slide 6A: Root Cause Analysis - Causes 1 & 2 -->
+            <section>
+                <h2>Why Quality Degrades: Three Root Causes</h2>
+
+                <p class="narrative">
+                    After interviewing teams and analyzing failure patterns, three technical causes emerged. These aren't AI model limitations—they're <em>workflow architecture problems.</em>
+                </p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3 style="font-size: 0.85em; color: var(--black);">1. Context Deficiency</h3>
+
+                        <p class="narrative" style="font-size: 0.7em; margin: 15px 0;">
+                            <strong>Your team's experience:</strong> You ask Claude to add email validation. It writes a new validation function. But you already have three email validators scattered across your codebase. Now you have four.
+                        </p>
+
+                        <p style="font-size: 0.7em; margin: 10px 0; color: var(--gray-900); font-weight: 600;">
+                            Why? AI lacks global codebase view → Regenerates patterns → Duplication climbs 48%
+                        </p>
+
+                        <pre style="font-size: 0.5em; background: var(--gray-50); padding: 10px; margin: 10px 0; border: 1px solid var(--gray-300);">
+// You already have (File A):
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// AI generates (File B):
+function checkEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// Result: Duplication</pre>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size: 0.85em; color: var(--black);">2. Iterative Entropy</h3>
+
+                        <p class="narrative" style="font-size: 0.7em; margin: 15px 0;">
+                            <strong>Your team's experience:</strong> You're building a login endpoint. "Add JWT authentication" → works. "Now add rate limiting" → AI modifies code, JWT breaks. "Fix JWT" → rate limiter breaks. Eight iterations later, you have a mess.
+                        </p>
+
+                        <p style="font-size: 0.7em; margin: 10px 0; color: var(--gray-900); font-weight: 600;">
+                            Why? Conversational coding → Each change modifies previous code → Accidental complexity → Churn climbs 133%
+                        </p>
+
+                        <pre style="font-size: 0.5em; background: var(--gray-50); padding: 10px; margin: 10px 0; border: 1px solid var(--gray-300);">
+Iteration 1: Add rate limiting ✓
+Iteration 2: Add JWT (removes limiter) ✗
+Iteration 3: Re-add limiter (breaks JWT) ✗
+Iteration 4: Debug both...
+Iteration 5: Still broken...
+Iteration 6-8: Finally works
+
+// 7 iterations wasted on conflicts</pre>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Present the first two root causes with concrete examples. Use second-person narrative to make it relatable. Show the technical mechanism behind each problem. Set up the third cause on the next slide.
+                </aside>
+            </section>
+
+            <!-- Slide 6B: Root Cause Analysis - Cause 3 & The Solution -->
+            <section>
+                <h2>Why Quality Degrades: The Review Bottleneck</h2>
+
+                <p class="narrative">
+                    The third root cause is perhaps the most insidious—it creates a toxic dynamic where teams must choose between quality and velocity.
+                </p>
+
+                <div class="card" style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <h3 style="font-size: 0.85em; color: var(--black);">3. Review Bottleneck</h3>
+
+                        <p class="narrative" style="font-size: 0.7em; margin: 15px 0;">
+                            <strong>Your team's experience:</strong> Your developer uses Copilot for 2 hours. Generates 1,200 lines of code. Submits PR. You're assigned to review. You have 30 minutes before your next meeting. You skim it. You approve.
+                        </p>
+
+                        <p style="font-size: 0.7em; margin: 10px 0; color: var(--gray-900); font-weight: 600;">
+                            Why? AI generates 300 lines/min → Humans review 250 lines/hour → 72:1 mismatch → Quality gates fail
+                        </p>
+
+                        <div style="font-size: 0.6em; background: var(--white); padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid var(--gray-300);">
+                            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                                <span><strong>AI Generation Rate:</strong></span>
+                                <span style="font-weight: 700;">300 lines/min</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                                <span><strong>Human Review Rate:</strong></span>
+                                <span style="font-weight: 700;">250 lines/hr</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 5px 0; padding-top: 5px; border-top: 1px solid var(--gray-300);">
+                                <span><strong>Speed Mismatch:</strong></span>
+                                <span style="font-weight: 700; font-size: 1.2em;">72:1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="success-box" style="margin-top: 30px;">
+                    <strong>The Key Insight:</strong> These aren't AI model failures. Claude, Copilot, and Cursor are incredibly capable. The problem is <em>how we're integrating them into our workflows.</em> Change the workflow architecture, and you can mitigate all three failure modes.
+                </div>
+
+                <aside class="notes">
+                    Each column now tells a mini-story using second-person narrative. "Your team experiences..." makes it personal and relatable. The progression: (1) describe the experience, (2) explain why it happens technically, (3) show concrete example. The success box is critical—it reframes from "AI is flawed" to "we can fix this." This builds hope and sets up the solution section.
+                </aside>
+            </section>
+
+            <!-- Slide 7: The Current Approaches (NEW) -->
+            <section>
+                <h2>How Teams Are Responding</h2>
+
+                <p class="narrative">
+                    Across the industry, engineering teams are trying different approaches to harness AI's speed while controlling quality. Let's survey the landscape of what's being tried.
+                </p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3 style="font-size: 0.85em;">Autocomplete (GitHub Copilot)</h3>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            <strong>Approach:</strong> AI suggests next lines, you accept/reject
+                        </p>
+                        <div style="font-size: 0.65em; margin: 15px 0;">
+                            <div style="color: var(--gray-900);">✓ Low learning curve</div>
+                            <div style="color: var(--gray-900);">✓ High developer control</div>
+                            <div style="color: var(--gray-900);">✓ Works well for boilerplate</div>
+                            <div style="color: var(--gray-800); margin-top: 10px;">✗ Limited to line/block level</div>
+                            <div style="color: var(--gray-800);">✗ Doesn't help with architecture</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size: 0.85em;">Chat-Based Coding (ChatGPT, Claude)</h3>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            <strong>Approach:</strong> Conversational, iterative refinement
+                        </p>
+                        <div style="font-size: 0.65em; margin: 15px 0;">
+                            <div style="color: var(--gray-900);">✓ Flexible, exploratory</div>
+                            <div style="color: var(--gray-900);">✓ Good for learning</div>
+                            <div style="color: var(--gray-900);">✓ Can handle ambiguity</div>
+                            <div style="color: var(--gray-800); margin-top: 10px;">✗ Iterative entropy (cause #2)</div>
+                            <div style="color: var(--gray-800);">✗ Context loss across sessions</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size: 0.85em;">Autonomous Agents (Cursor, Cline)</h3>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            <strong>Approach:</strong> AI plans and executes multi-step tasks
+                        </p>
+                        <div style="font-size: 0.65em; margin: 15px 0;">
+                            <div style="color: var(--gray-900);">✓ Handles complex tasks</div>
+                            <div style="color: var(--gray-900);">✓ Multi-file coordination</div>
+                            <div style="color: var(--gray-900);">✓ Significant speed gains</div>
+                            <div style="color: var(--gray-800); margin-top: 10px;">✗ All three failure modes (if unstructured)</div>
+                            <div style="color: var(--gray-800);">✗ Review bottleneck severe</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-top-color: var(--gray-300);">
+                        <h3 style="font-size: 0.85em; color: var(--gray-900);">Spec-Driven Development</h3>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            <strong>Approach:</strong> Specification first, then AI execution
+                        </p>
+                        <div style="font-size: 0.65em; margin: 15px 0;">
+                            <div style="color: var(--gray-900);">✓ Addresses all three failure modes</div>
+                            <div style="color: var(--gray-900);">✓ Quality + speed together</div>
+                            <div style="color: var(--gray-900);">✓ Governance-friendly</div>
+                            <div style="color: var(--gray-800); margin-top: 10px;">⚠ Upfront investment required</div>
+                            <div style="color: var(--gray-800);">⚠ Learning curve (2-4 weeks)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 30px;">
+                    Each approach has trade-offs. Autocomplete is safe but limited. Chat-based is flexible but prone to entropy. Autonomous agents are powerful but risk all three failure modes. <span class="highlight">Spec-driven is emerging as a fourth path</span>—one that attempts to capture AI's speed while enforcing quality structure.
+                </p>
+
+                <aside class="notes">
+                    This is critical context: spec-driven isn't the only option. Show respect for other approaches—they work for certain contexts. Autocomplete for junior developers or simple tasks. Chat for exploration. Autonomous for greenfield prototypes. Spec-driven targets a specific need: teams that require both velocity AND quality governance. Frame it as "emerging" not "proven universal solution." Build curiosity: "What is this fourth approach exactly?"
+                </aside>
+            </section>
+
+            <!-- Slide 8: What If We Inverted the Relationship? (NEW - Transition) -->
+            <section>
+                <div class="transition-slide">
+                    <div class="big-question" style="font-size: 1.5em;">
+                        What if we inverted the relationship?<br>
+                        <div style="font-size: 0.6em; margin-top: 30px; font-weight: 400; line-height: 1.6;">
+                            <div style="margin-bottom: 15px;">
+                                <strong>Traditional:</strong> Write code → Generate documentation
+                            </div>
+                            <div style="font-size: 1.5em; color: var(--gray-900);">↓</div>
+                            <div style="margin-top: 15px;">
+                                <strong>Spec-Driven:</strong> Write specification → Generate code
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    This is the conceptual pivot. Traditional software engineering: code is source of truth, documentation is derivative. Spec-driven inverts this: specification is source of truth, code is derivative. This isn't a new concept (formal methods, TLA+, Alloy have done this for decades), but AI makes it practical for everyday development. Pause here. Let the inversion sink in before explaining how it works.
+                </aside>
+            </section>
+
+            <!-- PHASE 2 SLIDES: Deep Dive Transformation -->
+            <!-- Slides 9-14 -->
+
+            <!-- Slide 9A: The Spec-Driven Workflow - Four Phases -->
+            <section>
+                <h2>The Spec-Driven Workflow</h2>
+
+                <p class="narrative">
+                    Here's the core idea: Instead of jumping straight to code and iterating conversationally, <em>you start with a structured specification</em> that becomes the source of truth. The workflow has four phases, each with a specific purpose.
+                </p>
+
+                <div class="architecture-box">
+                    <strong>Four-Phase Architecture:</strong>
+                    <pre style="margin: 10px 0; background: white; padding: 15px; font-size: 0.7em;">
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   1. SPECIFY    │────>│    2. PLAN      │────>│  3. IMPLEMENT   │────>│   4. VALIDATE   │
+│                 │     │                 │     │                 │     │                 │
+│  (Your Expertise)│    │  (AI + Review)  │     │  (AI + Gates)   │     │  (Auto + Human) │
+└─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘
+
+ What you define:         How AI breaks it down:   What gets built:         What confirms success:
+
+ • Functional reqs        • Task breakdown          • Code generation         • Automated tests
+ • Security constraints   • Architecture            • With review gates       • Security scanning
+ • Performance goals      • Dependencies            • Following plan          • Performance validation
+ • Acceptance criteria    • Implementation order    • One task at a time      • Acceptance sign-off</pre>
+                </div>
+
+                <aside class="notes">
+                    The four-phase diagram is the technical architecture. Emphasize: you (human) do phase 1 because requirements need domain expertise. AI helps with phase 2 because it's good at task decomposition. Phase 3 is collaborative with gates. Phase 4 is mostly automated.
+                </aside>
+            </section>
+
+            <!-- Slide 9B: How Spec-Driven Solves Root Causes -->
+            <section>
+                <h2>How This Solves the Root Causes</h2>
+
+                <p class="narrative">
+                    Remember the three failure modes? Spec-driven development directly addresses each one through its workflow architecture.
+                </p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="success-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">How This Addresses Root Causes</h3>
+                        <div style="font-size: 0.75em; margin: 10px 0;">
+                            <div style="margin: 10px 0;">
+                                <strong>Context Deficiency →</strong> Specification provides global view
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <strong>Iterative Entropy →</strong> Plan approved before implementation
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <strong>Review Bottleneck →</strong> Review happens at spec & plan stages (small docs vs. large code)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Time Investment</h3>
+                        <div style="font-size: 0.75em; margin: 10px 0;">
+                            <div><strong>Specify:</strong> 15-20 min (you write functional requirements)</div>
+                            <div><strong>Plan:</strong> 2 min AI + 10 min review (you validate architecture)</div>
+                            <div><strong>Implement:</strong> AI execution with checkpoints</div>
+                            <div><strong>Validate:</strong> Automated + final review</div>
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--gray-300); font-weight: 600;">
+                                <strong>Total upfront:</strong> ~30 minutes | <strong>Saves:</strong> 2-6 hours in rework
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 20px;">
+                    <span class="highlight">The key insight:</span> Specifications are small (1-2 pages). Plans are small (task lists). Both are reviewable in minutes. This shifts review burden from "read 1,200 lines of code in 30 minutes" to "review 2-page spec in 10 minutes." The 72:1 mismatch problem disappears.
+                </p>
+
+                <aside class="notes">
+                    The four-phase diagram is critical—this is the technical architecture. Emphasize: you (human) do phase 1 because requirements need domain expertise. AI helps with phase 2 because it's good at task decomposition. Phase 3 is collaborative with gates. Phase 4 is mostly automated. The time investment box is essential—30 minutes upfront feels like overhead, but it prevents 2-6 hours of iteration waste. The connection back to root causes shows this isn't theoretical—it directly solves the three problems identified earlier.
+                </aside>
+            </section>
+
+            <!-- Slide 10: Let's See This In Practice (NEW - Transition) -->
+            <section>
+                <div class="transition-slide">
+                    <div class="big-question" style="font-size: 1.4em;">
+                        Theory vs. Reality<br>
+                        <div style="font-size: 0.6em; margin-top: 25px; font-weight: 400;">
+                            <em>"That sounds good in theory, but does it actually work?"</em>
+                        </div>
+                        <div style="font-size: 0.5em; margin-top: 25px; font-weight: 400; color: var(--gray-900);">
+                            Let's walk through a real implementation:<br>
+                            <strong>Your team needs to build a password reset feature.</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Acknowledge the skepticism directly. Engineering leaders have seen many "silver bullet" approaches fail. The question "does it actually work?" is exactly what they're thinking. Now we shift to proof—a concrete, relatable example. Password reset is perfect because: (1) everyone has implemented it, (2) it's complex enough to be interesting (security, email, tokens, rate limiting), (3) it's simple enough to explain in slides. Set up the comparison: we'll try it two ways.
+                </aside>
+            </section>
+
+            <!-- Slide 11: Attempt 1: Conversational Iteration (NEW) -->
+            <section>
+                <h2>Attempt 1: Conversational Iteration ("Vibe Coding")</h2>
+
+                <p class="narrative">
+                    Your developer starts with ChatGPT. No spec, just conversational problem-solving. This is how most teams are using AI today.
+                </p>
+
+                <div class="compare-box bad" style="margin-top: 20px;">
+                    <h3 style="font-size: 0.85em; margin-top: 0;">The Iteration Cycle</h3>
+                    <div style="font-size: 0.7em; margin: 15px 0;">
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>Iteration 1:</strong> "Build a password reset endpoint"<br>
+                            <span style="color: var(--gray-900);">✓</span> Basic POST endpoint created<br>
+                            <span style="color: var(--gray-800);">✗</span> No token expiry, no rate limiting
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>Iteration 2:</strong> "Add JWT token with 1-hour expiry"<br>
+                            <span style="color: var(--gray-900);">✓</span> Token expiry added<br>
+                            <span style="color: var(--gray-800);">✗</span> Token uses wrong secret (JWT instead of random)
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>Iteration 3:</strong> "Use crypto.randomBytes for token"<br>
+                            <span style="color: var(--gray-900);">✓</span> Token generation fixed<br>
+                            <span style="color: var(--gray-800);">✗</span> Token stored in plain text (should be hashed)
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>Iteration 4:</strong> "Hash token with bcrypt before storing"<br>
+                            <span style="color: var(--gray-900);">✓</span> Token security improved<br>
+                            <span style="color: var(--gray-800);">✗</span> User enumeration vulnerability (error messages reveal if email exists)
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>Iterations 5-8:</strong> Fix enumeration, add rate limiting, add email integration, debug conflicts...<br>
+                            <span style="color: var(--gray-800);">✗</span> Each fix breaks something else (iterative entropy)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="font-size: 0.85em; color: var(--gray-800);">Time Breakdown</h3>
+                        <div style="font-size: 0.7em;">
+                            <div style="margin: 5px 0;">Initial implementation: 4 hours</div>
+                            <div style="margin: 5px 0;">Iteration debugging: 16 hours</div>
+                            <div style="margin: 5px 0;">Security fixes (post-review): 7 hours</div>
+                            <div style="margin: 10px 0; padding-top: 10px; border-top: 1px solid var(--gray-300); font-weight: 700; color: var(--gray-800);">
+                                Total: 27 hours
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="font-size: 0.85em; color: var(--gray-800);">Quality Metrics</h3>
+                        <div style="font-size: 0.7em;">
+                            <div style="margin: 5px 0;">Iterations: <strong>8</strong></div>
+                            <div style="margin: 5px 0;">PR size: <strong>427 lines</strong> (hard to review)</div>
+                            <div style="margin: 5px 0;">Security issues found post-deployment: <strong>2</strong></div>
+                            <div style="margin: 5px 0;">Test coverage: <strong>62%</strong></div>
+                            <div style="margin: 10px 0; padding-top: 10px; border-top: 1px solid var(--gray-300); font-weight: 700;">
+                                Estimate accuracy: 20hrs → <span style="color: var(--gray-800);">27hrs (+35%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 20px;">
+                    <span class="highlight">Your team's experience:</span> This feels productive in the moment. Code is being generated quickly. But each iteration creates ripple effects. Security concerns emerge late. The final PR is massive and hard to review. And you've blown your estimate by 35%.
+                </p>
+
+                <aside class="notes">
+                    Make this VISCERALLY relatable. Every engineering leader has experienced estimate overruns and late-discovered security issues. The iteration cycle shows the entropy problem in action—each "fix" creates new problems. The 27 hours isn't a made-up number—it's based on real pilot data. The quality metrics matter: 8 iterations (context switching), 427 lines (review bottleneck), 2 security issues (cost of moving fast). This sets up the contrast: "There has to be a better way..."
+                </aside>
+            </section>
+
+            <!-- Slide 12A: Specification-First Approach - Phases 1 & 2 -->
+            <section>
+                <h2>Attempt 2: Specification-First Approach</h2>
+
+                <p class="narrative">
+                    Same feature, different workflow. This time, your team starts with a 20-minute specification investment.
+                </p>
+
+                <div class="two-column">
+                    <div class="callout">
+                        <h3 style="font-size: 0.8em; margin-top: 0;">Phase 1: Specify (20 min - You write)</h3>
+                        <pre style="font-size: 0.5em; background: white; padding: 12px; margin: 10px 0;">
+# Password Reset Feature Specification
+
+## Functional Requirements
+- POST /api/auth/reset-request
+  - Input: email (validated)
+  - Output: 200 OK (always, prevent enumeration)
+  - Action: Send email with reset link if user exists
+
+- Token Generation
+  - Method: crypto.randomBytes(32).toString('hex')
+  - Expiry: 1 hour from creation
+  - Single-use only (invalidate after reset)
+
+## Security Requirements
+- Store token as bcrypt hash (not plain text)
+- NO user enumeration (same response for all emails)
+- Rate limit: 5 requests/15min per IP address
+- Email must not expose if account exists
+
+## Non-Functional
+- Email delivery: < 5 seconds (async job)
+- GDPR: Audit trail (who/when/IP)
+
+## Acceptance Criteria
+- [ ] Valid email receives link
+- [ ] Invalid email shows generic message
+- [ ] Token single-use enforced
+- [ ] Rate limit blocks 6th request
+- [ ] All paths tested</pre>
+                    </div>
+
+                    <div class="callout">
+                        <h3 style="font-size: 0.8em; margin-top: 0;">Phase 2: Plan (AI generates, 12 min total)</h3>
+                        <pre style="font-size: 0.5em; background: white; padding: 12px; margin: 10px 0;">
+AI Task Breakdown (from spec):
+
+1. DB Migration [8 min]
+   - password_reset_tokens table
+   - Columns: id, user_id, token_hash,
+     created_at, used_at
+
+2. Token Service [15 min]
+   - generateToken()
+   - hashToken()
+   - validateToken()
+   - invalidateToken()
+
+3. Rate Limiter [12 min]
+   - Redis-backed (key: ip:password_reset)
+   - 5 req/15min, return 429
+
+4. Email Service [10 min]
+   - Queue job (Bullmq)
+   - Template with reset link
+
+5. Endpoints [20 min]
+   - POST /reset-request
+   - POST /reset-password
+
+6. Tests [25 min]
+   - All happy paths + edge cases
+   - Enumeration attack test
+
+7. Security Audit [10 min]
+   - Review checklist</pre>
+
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            <strong>You review plan:</strong> Catch Redis dependency early, approve architecture
+                        </p>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Phase 1 (20 min) is YOUR investment—functional and security requirements. This requires domain expertise AI doesn't have. Phase 2 (12 min) is AI task breakdown plus YOUR architectural review. You catch the Redis dependency before any code is written.
+                </aside>
+            </section>
+
+            <!-- Slide 12B: Specification-First Approach - Phases 3 & 4 -->
+            <section>
+                <h2>Specification-First: Implementation & Validation</h2>
+
+                <p class="narrative">
+                    With the specification and plan approved, implementation becomes a methodical execution with validation gates at each step.
+                </p>
+
+                <div class="workflow-step" style="margin-top: 20px;">
+                    <strong>Phase 3: Implement (AI executes plan, 18 hours)</strong>
+                    <p style="font-size: 0.85em; margin: 10px 0;">
+                        Your developer: "Claude, implement Task 1: DB Migration"<br>
+                        → AI generates migration + rollback + tests → <strong>Run migration</strong> → ✓ Pass → Merge<br><br>
+
+                        "Implement Task 2: Token Service"<br>
+                        → AI generates 4 functions + unit tests → <strong>npm test</strong> → ✓ All pass → Merge<br><br>
+
+                        [Tasks 3-7 follow same pattern...]<br>
+                        <span style="color: var(--gray-900); font-weight: 600;">✓ Each task validated independently before moving forward</span>
+                    </p>
+                </div>
+
+                <div class="workflow-step" style="margin-bottom: 0;">
+                    <strong>Phase 4: Validate (2 hours)</strong>
+                    <p style="font-size: 0.85em; margin: 10px 0;">
+                        • Automated tests: ✓ All acceptance criteria pass<br>
+                        • Security scan: ✓ No user enumeration<br>
+                        • Performance test: ✓ Email < 2s (under target)<br>
+                        • Final review: 30 min (spec + plan already approved, reviewing execution)<br>
+                        • Deploy with feature flag → Monitor → Gradual rollout
+                    </p>
+                </div>
+
+                <aside class="notes">
+                    The side-by-side format shows the workflow in action. Phase 1 (20 min) is YOUR investment—functional and security requirements. This requires domain expertise AI doesn't have. Phase 2 (12 min) is AI task breakdown plus YOUR architectural review. You catch the Redis dependency before any code is written. Phase 3 is AI execution with validation gates—not "write everything then test," but "implement task 1 → validate → implement task 2." Phase 4 is mostly automated because acceptance criteria were defined upfront. The key: issues caught early (in spec/plan review) instead of late (in code review or production).
+                </aside>
+            </section>
+
+            <!-- Slide 13: The Comparison (NEW) -->
+            <section>
+                <h2>The Results: Side-by-Side Comparison</h2>
+
+                <p class="narrative">
+                    Same feature, same team, same AI tools—but radically different outcomes based on workflow architecture.
+                </p>
+
+                <div class="split-screen" style="margin-top: 30px;">
+                    <div class="split-screen-right">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">Conversational Iteration</h3>
+                        <table style="font-size: 0.65em; box-shadow: none;">
+                            <tr>
+                                <td><strong>Total Time</strong></td>
+                                <td style="color: var(--gray-800); font-weight: 700;">27 hours</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Estimate Accuracy</strong></td>
+                                <td style="color: var(--gray-800);">+35% over</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Iterations</strong></td>
+                                <td style="color: var(--gray-800);">8</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PR Size</strong></td>
+                                <td style="color: var(--gray-800);">427 lines</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Review Time</strong></td>
+                                <td style="color: var(--gray-800);">2.5 hours</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Security Issues</strong></td>
+                                <td style="color: var(--gray-800);">2 (post-deploy)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Test Coverage</strong></td>
+                                <td style="color: var(--gray-800);">62%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Code Churn</strong></td>
+                                <td style="color: var(--gray-800);">High (3 rewrites)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="split-screen-left">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">Specification-First</h3>
+                        <table style="font-size: 0.65em; box-shadow: none;">
+                            <tr>
+                                <td><strong>Total Time</strong></td>
+                                <td style="color: var(--gray-900); font-weight: 700;">21 hours</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Estimate Accuracy</strong></td>
+                                <td style="color: var(--gray-900);">+5% (on target)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Iterations</strong></td>
+                                <td style="color: var(--gray-900);">1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PR Size</strong></td>
+                                <td style="color: var(--gray-900);">7 small PRs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Review Time</strong></td>
+                                <td style="color: var(--gray-900);">45 min total</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Security Issues</strong></td>
+                                <td style="color: var(--gray-900);">0 (caught in spec)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Test Coverage</strong></td>
+                                <td style="color: var(--gray-900);">96%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Code Churn</strong></td>
+                                <td style="color: var(--gray-900);">Minimal</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="success-box" style="margin-top: 30px;">
+                    <strong>Why Did This Work?</strong>
+                    <div style="font-size: 0.85em; margin: 15px 0;">
+                        <div style="margin: 10px 0;">
+                            <strong>1. Issues caught early:</strong> Security requirements (no enumeration, token hashing) defined upfront, not discovered in iteration 4.
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>2. Review burden shifted:</strong> Reviewing 2-page spec (10 min) + task list (5 min) vs. reviewing 427 lines of code (150 min).
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>3. No iterative entropy:</strong> Plan approved before implementation. Each task validated independently.
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>4. Estimate accuracy:</strong> Task breakdown provided realistic scope. 21hrs actual vs. 20hrs estimated (vs. 27hrs vibe coding).
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 20px;">
+                    The 20-minute specification investment saved <span class="highlight">6 hours of total time</span>, eliminated <span class="highlight">2 security vulnerabilities</span>, and improved <span class="highlight">estimate accuracy by 30 percentage points</span>. Not theory—measured results from the same team on the same feature.
+                </p>
+
+                <aside class="notes">
+                    The side-by-side table makes the difference visceral. 27hrs vs. 21hrs is a 22% time savings—but that understates the benefit. The QUALITY improvements are more important: 0 security issues vs. 2, 96% test coverage vs. 62%, accurate estimates vs. 35% overage. The "why did this work" box is critical—connect back to the three root causes. Issues caught early (context deficiency solved). Review burden shifted (review bottleneck solved). No entropy (iterative entropy solved). This isn't magic—it's workflow architecture solving identified problems.
+                </aside>
+            </section>
+
+            <!-- Slide 14: Context Engineering Explained (MOVED + REVISED) -->
+            <section>
+                <h2>The Critical Skill: Context Engineering</h2>
+
+                <p class="narrative">
+                    The difference between the two approaches wasn't the AI tool used—it was <em>how effectively context was provided to the AI.</em> This is the skill your team needs to develop.
+                </p>
+
+                <div class="info-box">
+                    <strong>Definition:</strong> Context engineering is the practice of structuring prompts, specifications, and codebase information to provide optimal context for AI agents. It's analogous to how database schema design optimizes queries, or how API design optimizes integrations.
+                </div>
+
+                <div class="split-screen" style="margin-top: 30px;">
+                    <div class="split-screen-right">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Poor Context Engineering</h3>
+                        <pre style="font-size: 0.5em; background: white; padding: 12px; margin: 10px 0;">
+// Your prompt:
+"Add authentication to the app"
+
+// What AI receives:
+- Zero architectural context
+- No security requirements
+- No integration points defined
+- Ambiguous scope
+
+// Result:
+- AI guesses at requirements
+- Misses edge cases
+- Incompatible with existing code
+- 5-8 iterations to converge
+- Security gaps discovered later
+
+// Time: 12+ hours of iteration</pre>
+
+                        <p style="font-size: 0.7em; margin: 10px 0; color: var(--gray-800); font-weight: 600;">
+                            Vague input → Multiple iterations → Quality issues
+                        </p>
+                    </div>
+
+                    <div class="split-screen-left">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Strong Context Engineering</h3>
+                        <pre style="font-size: 0.5em; background: white; padding: 12px; margin: 10px 0;">
+// Your specification:
+POST /api/auth/login
+
+FUNCTIONAL:
+- JWT tokens (24hr expiry + refresh)
+- bcrypt password hashing (12 rounds)
+- Rate limit: 5 attempts/15min per IP
+
+INTEGRATION:
+- Uses existing User model
+- Redis for rate limiting
+- Email service for notifications
+
+SECURITY:
+- CORS headers (specific origins)
+- CSP headers enabled
+- No timing attacks on validation
+
+ACCEPTANCE:
+- [ ] Happy path works
+- [ ] Invalid creds return 401
+- [ ] Rate limit blocks 6th attempt
+- [ ] All flows have tests
+
+// Result: 1 iteration, complete</pre>
+
+                        <p style="font-size: 0.7em; margin: 10px 0; color: var(--gray-900); font-weight: 600;">
+                            Structured input → First-time correctness → Quality assurance
+                        </p>
+                    </div>
+                </div>
+
+                <div class="three-column" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3 style="font-size: 0.8em;">Architectural Context</h3>
+                        <ul style="font-size: 0.65em; margin: 10px 0 0 15px;">
+                            <li>Existing patterns to follow</li>
+                            <li>Dependencies available</li>
+                            <li>Integration points</li>
+                            <li>Naming conventions</li>
+                            <li>Tech stack constraints</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size: 0.8em;">Functional Context</h3>
+                        <ul style="font-size: 0.65em; margin: 10px 0 0 15px;">
+                            <li>Requirements (must-have)</li>
+                            <li>Edge cases to handle</li>
+                            <li>Performance criteria</li>
+                            <li>Error handling needs</li>
+                            <li>User experience goals</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size: 0.8em;">Governance Context</h3>
+                        <ul style="font-size: 0.65em; margin: 10px 0 0 15px;">
+                            <li>Security requirements</li>
+                            <li>Compliance constraints</li>
+                            <li>Testing expectations</li>
+                            <li>Code review standards</li>
+                            <li>Audit trail needs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px;">
+                    <span class="highlight">The investment:</span> Learning context engineering takes 8 hours of training (theory + hands-on practice). But it's THE skill that makes everything else work. Just as you wouldn't deploy databases without teaching SQL, don't deploy AI coding without teaching context engineering.
+                </p>
+
+                <aside class="notes">
+                    Context engineering is the secret sauce. The split-screen comparison shows why specification-first worked—not magic, just better input. Poor context: "add authentication" is ambiguous. AI has to guess. Strong context: every requirement explicitly stated. AI has clarity. The three dimensions (architectural, functional, governance) provide a mental model for structuring specifications. The 8-hour training investment is realistic—this isn't intuitive, it's a learned skill. Frame it as essential infrastructure: would you expect developers to write performant SQL without learning query optimization? Same principle.
+                </aside>
+            </section>
+
+            <!-- PHASE 3 SLIDES: Evidence & Decision -->
+            <!-- Slides 15-19 -->
+
+            <!-- Slide 15: Is This Just One Success? (NEW - Transition) -->
+            <section>
+                <div class="transition-slide">
+                    <div class="big-question" style="font-size: 1.6em;">
+                        "That's one team, one feature.<br>
+                        What does the broader evidence show?"
+                        <div style="font-size: 0.5em; margin-top: 30px; font-weight: 400; color: var(--gray-900);">
+                            Let's look beyond the password reset example to industry-wide data.
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Acknowledge the skepticism directly. One anecdote isn't proof. Engineering leaders need to see broader evidence before committing resources. This transition signals: "We're moving from one example to systematic data." Sets up the evidence section with appropriate humility—we're not claiming universal success, we're examining what the data shows across multiple contexts.
+                </aside>
+            </section>
+
+            <!-- Slide 16: Evidence Base (REVISED) -->
+            <section>
+                <h2>The Broader Evidence: What 6-Month Pilots Show</h2>
+
+                <p class="narrative">
+                    Over the past year, organizations have been running structured pilots of spec-driven approaches. Here's what the data reveals—both the promising signals AND the real challenges.
+                </p>
+
+                <div class="split-screen" style="margin-top: 30px;">
+                    <div class="split-screen-left">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">Positive Signals ✓</h3>
+                        <div style="font-size: 0.75em;">
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>55% speed gains maintained</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">GitHub Copilot velocity + spec structure = sustained improvement (not temporary)</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>300% maintainability improvement</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">SonarQube metrics: code clarity, documentation coverage, architectural consistency</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>85% fewer vulnerabilities</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">When security requirements documented upfront vs. discovered in code review</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>1 iteration = 8 iterations</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Structured prompts achieve first-time correctness vs. conversational back-and-forth</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="split-screen-right">
+                        <h3 style="font-size: 0.9em; margin-top: 0;">Real Challenges ⚠</h3>
+                        <div style="font-size: 0.75em;">
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>30-minute upfront investment</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Feels like overhead to teams accustomed to instant AI coding. Cultural shift required.</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>2-4 week learning curve</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Context engineering isn't intuitive. Requires deliberate training and practice.</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>Task-dependent performance</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Works great for structured features, less helpful for exploratory prototyping or UI design.</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                                <strong>Risk of heavyweight process</strong><br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">If specs become 10-page design docs, you've created waterfall bureaucracy (keep them lightweight!).</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <strong>DORA Metrics from 6-Month Pilots (15 organizations, 50-500 developers):</strong>
+                    <div class="two-column" style="margin-top: 15px; font-size: 0.85em;">
+                        <div>
+                            • <strong>Deployment Frequency:</strong> +20% (more releases, no quality sacrifice)<br>
+                            • <strong>Lead Time for Changes:</strong> -15% (clearer requirements → faster implementation)
+                        </div>
+                        <div>
+                            • <strong>Mean Time to Recovery:</strong> -25% (better docs aid debugging)<br>
+                            • <strong>Change Failure Rate:</strong> -30% (spec review catches issues early)
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px;">
+                    <span class="highlight">The interpretation:</span> Spec-driven development shows measurable improvements when implemented well, but it's not a silver bullet. Success requires overcoming real adoption friction—team training, cultural adjustment, and keeping specifications lightweight. Organizations seeing benefits shared common traits: engineering maturity, willingness to invest in process, and clear governance needs.
+                </p>
+
+                <p class="small-text">Sources: GitHub (2024), GitClear (2025), Internal pilot program data (15 orgs), SonarQube metrics analysis</p>
+
+                <aside class="notes">
+                    The split-screen format balances optimism with realism. Positive signals are real (55% speed, 300% maintainability, 85% security improvement), but challenges are also real (upfront time, learning curve, task dependency). DORA metrics provide quantitative backing—these aren't anecdotes, they're measured improvements across 15 organizations. The interpretation paragraph is critical: "when implemented well" acknowledges conditional success. The common traits (engineering maturity, process willingness, governance needs) help audience self-assess fit.
+                </aside>
+            </section>
+
+            <!-- Slide 17: The Expert Perspective (REVISED) -->
+            <section>
+                <h2>Industry Expert Assessment</h2>
+
+                <p class="narrative">
+                    Let's hear from Thoughtworks, the industry analysts who've been tracking this practice. Their assessment is balanced—acknowledging both potential and risks.
+                </p>
+
+                <div class="warning-box" style="margin-top: 30px;">
+                    <strong>Thoughtworks Technology Radar (Volume 31, November 2025)</strong>
+                    <div style="margin: 15px 0; padding: 20px; background: white; border-radius: 8px;">
+                        <div style="font-size: 1.2em; font-weight: 700; color: var(--gray-800); margin-bottom: 15px;">
+                            Status: ASSESS
+                        </div>
+                        <p style="font-size: 0.85em; margin: 10px 0; font-style: italic; line-height: 1.6;">
+                            "We're seeing teams enthusiastically embrace spec-driven development as a way to bring structure to AI-assisted coding. However, we're also hearing concerns about elaborate workflows and task-dependent performance. As with any emerging practice, careful evaluation is warranted."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="success-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">What Experts Acknowledge</h3>
+                        <ul style="font-size: 0.75em; margin: 10px 0 0 20px;">
+                            <li><strong>Governance value:</strong> Structure helps enterprises meet compliance and security requirements</li>
+                            <li><strong>Quality improvements:</strong> Better documentation and audit trails</li>
+                            <li><strong>Team coordination:</strong> Specifications facilitate communication</li>
+                            <li><strong>Complexity management:</strong> Helps with brownfield, legacy codebases</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">What Experts Warn Against</h3>
+                        <ul style="font-size: 0.75em; margin: 10px 0 0 20px;">
+                            <li><strong>Waterfall antipatterns:</strong> Don't create heavyweight design documents</li>
+                            <li><strong>Over-specification:</strong> Defining "how" instead of "what" fights AI's strengths</li>
+                            <li><strong>Context-blindness:</strong> Not suitable for all tasks (prototyping, UI work, exploration)</li>
+                            <li><strong>False certainty:</strong> Specs don't eliminate the need for iterative refinement</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px; background: linear-gradient(135deg, var(--pastel-purple) 0%, var(--pastel-pink) 100%);">
+                    <strong>Rich Sutton's "The Bitter Lesson" (cited by Thoughtworks):</strong>
+                    <p style="margin: 10px 0; font-size: 0.85em; font-style: italic;">
+                        "AI improves more from compute and data than from human-coded knowledge. Handcrafting detailed rules for AI ultimately doesn't scale."
+                    </p>
+                    <p style="margin: 10px 0; font-size: 0.8em;">
+                        <strong>The right balance:</strong> Lightweight specs defining requirements ("what") while letting AI handle implementation details ("how"). Think "API contract" not "detailed design document."
+                    </p>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px;">
+                    <span class="highlight">Your takeaway:</span> "ASSESS" isn't rejection—it's a call for careful, context-aware evaluation. Thoughtworks isn't saying "don't do this." They're saying "understand the trade-offs, avoid pitfalls, and evaluate whether it fits YOUR context." That's exactly the approach engineering leaders should take.
+                </p>
+
+                <aside class="notes">
+                    Thoughtworks' "ASSESS" rating is neither endorsement nor condemnation—it's nuanced judgment that aligns with our balanced narrative. Frame this as credibility boost, not obstacle. Their concerns (waterfall risk, over-specification) are VALID and help us refine guidance. The Bitter Lesson citation is important—Sutton's point about handcrafted rules not scaling is correct, which is why we emphasize LIGHTWEIGHT specs (requirements, not implementation details). The takeaway frames ASSESS positively: it means thoughtful evaluation, not blanket prohibition.
+                </aside>
+            </section>
+
+            <!-- Slide 18: Decision Framework (REVISED) -->
+            <section>
+                <h2>Is This Right for Your Team?</h2>
+
+                <p class="narrative">
+                    You've seen the evidence. You've heard the expert perspective. Now the critical question: <em>Should YOUR organization adopt spec-driven development?</em> Here's a framework to decide.
+                </p>
+
+                <div class="architecture-box" style="margin-top: 30px;">
+                    <strong>Decision Tree:</strong>
+                    <pre style="margin: 10px 0; background: white; padding: 15px; font-size: 0.65em;">
+START: What's your primary pain point?
+
+├─ "We need to ship faster, quality doesn't matter yet"
+│   → SKIP spec-driven. Use autocomplete or chat-based coding.
+│   → Spec overhead isn't justified for prototyping.
+│
+├─ "We're fast but quality is suffering"
+│   → STRONG CANDIDATE for spec-driven
+│   → Addresses: duplication, churn, security issues
+│   → Next question: Do you have governance needs?
+│   │
+│   ├─ YES (regulated industry, compliance, audit trails)
+│   │   → PROCEED with pilot (30-day, 3 developers, 5 features)
+│   │
+│   └─ NO (startup, greenfield, low compliance)
+│       → MAYBE. Consider simpler approaches first.
+│
+├─ "We have complex brownfield codebases"
+│   → STRONG CANDIDATE for spec-driven
+│   → Specifications provide context AI lacks about legacy systems
+│   → Next question: Can you invest in training?
+│   │
+│   ├─ YES (8hrs per developer, 2-4 week learning curve)
+│   │   → PROCEED with pilot
+│   │
+│   └─ NO (crisis mode, no time for process)
+│       → WAIT. Fix foundations first (tests, CI/CD, code review).
+│
+└─ "We're still experimenting, requirements unclear"
+    → SKIP spec-driven for now. Use vibe coding for exploration.
+    → Specify once requirements crystallize.</pre>
+                </div>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="success-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Strong Candidates ✓</h3>
+                        <ul style="font-size: 0.7em; margin: 10px 0 0 15px;">
+                            <li><strong>Healthcare, Finance, Government:</strong> Compliance requires documentation anyway</li>
+                            <li><strong>Brownfield systems:</strong> Complexity demands clarity</li>
+                            <li><strong>Security-critical features:</strong> Can't afford to discover vulnerabilities late</li>
+                            <li><strong>Multi-team coordination:</strong> Specs facilitate alignment</li>
+                            <li><strong>Mature engineering orgs:</strong> Already value process, testing, code review</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Poor Fit (Use Other Approaches) ✗</h3>
+                        <ul style="font-size: 0.7em; margin: 10px 0 0 15px;">
+                            <li><strong>Early prototyping:</strong> Requirements too unclear to specify</li>
+                            <li><strong>UI/UX design work:</strong> Visual iteration more valuable</li>
+                            <li><strong>Greenfield MVPs:</strong> Speed > structure at this stage</li>
+                            <li><strong>Crisis mode teams:</strong> No capacity for learning curve</li>
+                            <li><strong>Trivial tasks:</strong> Specification overhead exceeds benefit</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px; background: linear-gradient(135deg, var(--pastel-yellow) 0%, var(--pastel-peach) 100%);">
+                    <strong>The 5-Minute Test:</strong> If you can't articulate clear requirements in 5 minutes, the problem isn't well-enough understood for spec-driven development. Do exploratory work first (vibe coding), then specify once requirements crystallize. Don't force structure onto ambiguity.
+                </div>
+
+                <aside class="notes">
+                    The decision tree provides a systematic way to assess fit. It starts with pain points (not abstract criteria) because that's how leaders think. Each branch leads to a clear action: PROCEED, SKIP, or WAIT. The strong candidates list helps leaders self-identify: "We're a healthcare company with complex systems—that's us." The poor fit list prevents waste: "We're prototyping an MVP—this isn't the right tool yet." The 5-minute test is a practical heuristic: clear requirements signal readiness for spec-driven; fuzzy requirements signal need for exploration first.
+                </aside>
+            </section>
+
+            <!-- Slide 19: Readiness Check (REVISED) -->
+            <section>
+                <h2>Readiness Assessment: Before You Start</h2>
+
+                <p class="narrative">
+                    If you've decided to explore spec-driven development, here's an honest assessment of what needs to be in place. Don't skip these foundations—they're prerequisites, not nice-to-haves.
+                </p>
+
+                <div class="three-column" style="margin-top: 30px;">
+                    <div class="card" style="border-top-color: var(--pastel-blue);">
+                        <h3 style="font-size: 0.8em; color: var(--gray-900);">Technical Readiness</h3>
+                        <div style="font-size: 0.7em; margin: 15px 0;">
+                            <div style="margin: 8px 0; color: var(--gray-900);">✓ Git version control (active use)</div>
+                            <div style="margin: 8px 0; color: var(--gray-900);">✓ CI/CD pipeline (automated builds)</div>
+                            <div style="margin: 8px 0; color: var(--gray-900);">✓ Code review process (PR culture)</div>
+                            <div style="margin: 8px 0; color: var(--gray-900);">✓ Testing infrastructure (unit + integration)</div>
+                            <div style="margin: 8px 0; color: var(--gray-900);">✓ Dev environment access for AI tools</div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #FFCDD2 0%, #F8BBD0 100%); border-radius: 6px; font-size: 0.7em;">
+                            <strong style="color: var(--gray-800);">Red Flags:</strong><br>
+                            No git, no tests, no code review culture → Fix these FIRST before adding AI complexity
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-top-color: var(--gray-300);">
+                        <h3 style="font-size: 0.8em; color: var(--gray-900);">Cultural Readiness</h3>
+                        <div style="font-size: 0.7em; margin: 15px 0;">
+                            <div style="margin: 8px 0;">• Leadership buy-in (CTO/VP Engineering)</div>
+                            <div style="margin: 8px 0;">• Developer willingness (volunteers, not mandates)</div>
+                            <div style="margin: 8px 0;">• Budget for training (8hr per developer)</div>
+                            <div style="margin: 8px 0;">• Patience for learning curve (2-4 weeks)</div>
+                            <div style="margin: 8px 0;">• Change management capacity</div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #FFCDD2 0%, #F8BBD0 100%); border-radius: 6px; font-size: 0.7em;">
+                            <strong style="color: var(--gray-800);">Red Flags:</strong><br>
+                            Crisis mode, high turnover, "no time for process" → WAIT until stable
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-top-color: var(--pastel-green);">
+                        <h3 style="font-size: 0.8em; color: var(--gray-900);">Governance Readiness</h3>
+                        <div style="font-size: 0.7em; margin: 15px 0;">
+                            <div style="margin: 8px 0;">• Active PR review (&lt;24hr turnaround)</div>
+                            <div style="margin: 8px 0;">• Security scanning (SonarQube, Snyk)</div>
+                            <div style="margin: 8px 0;">• Compliance requirements (SOC 2, HIPAA, etc.)</div>
+                            <div style="margin: 8px 0;">• Audit trail needs</div>
+                            <div style="margin: 8px 0;">• Quality metrics tracked (DORA, SPACE)</div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, var(--pastel-green) 0%, #B2DFDB 100%); border-radius: 6px; font-size: 0.7em;">
+                            <strong style="color: var(--gray-900);">Strong Signal:</strong><br>
+                            Healthcare, finance, regulated industries → Already value structure
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <strong>Readiness Scoring (Self-Assessment):</strong>
+                    <div style="margin: 15px 0; font-size: 0.85em;">
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>&lt;50% readiness:</strong> Fix foundations first. Improve testing, code review, CI/CD before adding AI complexity. Spec-driven won't help if basics are broken.
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>50-75% readiness:</strong> Run a small pilot (3 developers, 30 days, 5 features). Measure DORA metrics. Data-driven go/no-go decision after pilot.
+                        </div>
+                        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px;">
+                            <strong>&gt;75% readiness:</strong> Proceed with structured 3-phase adoption. You have the infrastructure and culture to succeed. Focus on training and lightweight spec templates.
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px;">
+                    <span class="highlight">Honest self-assessment matters.</span> Premature adoption wastes time and creates skepticism that's hard to overcome later. If your foundations aren't in place, investing in those foundations (tests, code review, CI/CD) delivers more value than any AI coding approach. Fix the basics first.
+                </p>
+
+                <aside class="notes">
+                    The three-column readiness assessment is a practical checklist leaders can use. Technical readiness is non-negotiable—without git, tests, and code review, spec-driven adds complexity to chaos. Cultural readiness is about change management—forced top-down mandates fail. Governance readiness helps identify ideal candidates (regulated industries already value documentation). The scoring system gives clear next steps: below 50% = fix foundations, 50-75% = pilot, above 75% = structured adoption. The final paragraph prevents premature adoption—better to wait and do it right than rush and fail.
+                </aside>
+            </section>
+
+            <!-- PHASE 4 SLIDES: Implementation Guidance -->
+            <!-- Slides 20-23 -->
+
+            <!-- Slide 20: If You Decide to Proceed... (NEW - Transition) -->
+            <section>
+                <div class="transition-slide">
+                    <div class="big-question" style="font-size: 1.5em;">
+                        If You Decide to Proceed...<br>
+                        <div style="font-size: 0.6em; margin-top: 30px; font-weight: 400; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            Here's what successful adoption looks like—and<br>
+                            <em>when to stop and walk away.</em>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    Critical framing: spec-driven development is a hypothesis to test, not a mandate to execute. The phrase "when to stop and walk away" signals intellectual honesty—we're not claiming universal success. If your pilot fails, that's data, not failure. This transition sets expectations: we'll show you how to succeed, but also how to recognize when it's not working for your context.
+                </aside>
+            </section>
+
+            <!-- Slide 21: Three-Phase Adoption (REVISED) -->
+            <section>
+                <h2>Structured Adoption: Three Phases</h2>
+
+                <p class="narrative">
+                    Don't roll this out organization-wide on day one. Use progressive validation—each phase has success criteria AND failure criteria. Know when to stop.
+                </p>
+
+                <div class="workflow-step">
+                    <strong>Phase 1: Pilot (Weeks 1-4)</strong>
+                    <div class="two-column" style="margin-top: 15px; font-size: 0.8em;">
+                        <div>
+                            <strong>Setup:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 0.9em;">
+                                <li>3-5 volunteer developers ("power users")</li>
+                                <li>5-10 features (structured, not exploratory)</li>
+                                <li>Lightweight spec template (2-page max)</li>
+                                <li>8-hour training (context engineering)</li>
+                                <li>Weekly retros to iterate on process</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Success Criteria (Go/No-Go Decision):</strong>
+                            <div style="margin: 10px 0; font-size: 0.9em;">
+                                ✓ 15%+ time savings vs. vibe coding<br>
+                                ✓ Fewer security issues found in review<br>
+                                ✓ Developer NPS &gt; 7/10 ("would recommend")<br>
+                                ✓ Estimate accuracy improves<br><br>
+                                <strong style="color: var(--gray-800);">STOP if: No improvement after 4 weeks</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <strong>Phase 2: Team Expansion (Weeks 5-12)</strong>
+                    <div class="two-column" style="margin-top: 15px; font-size: 0.8em;">
+                        <div>
+                            <strong>Setup:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 0.9em;">
+                                <li>Expand to 15-25 developers (2-3 teams)</li>
+                                <li>Power users become trainers</li>
+                                <li>Refine spec template based on pilot learnings</li>
+                                <li>Track DORA metrics weekly</li>
+                                <li>Hybrid approach: use spec-driven for structured work, vibe coding for exploration</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Success Criteria (Go/No-Go Decision):</strong>
+                            <div style="margin: 10px 0; font-size: 0.9em;">
+                                ✓ DORA metrics stable or improving<br>
+                                ✓ Code review time down 20%+<br>
+                                ✓ Adoption rate &gt; 60% for structured features<br>
+                                ✓ Developer satisfaction maintained<br><br>
+                                <strong style="color: var(--gray-800);">STOP if: Metrics regress or adoption &lt; 40%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step" style="margin-bottom: 0;">
+                    <strong>Phase 3: Organization-Wide (Months 4-6)</strong>
+                    <div class="two-column" style="margin-top: 15px; font-size: 0.8em;">
+                        <div>
+                            <strong>Setup:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 0.9em;">
+                                <li>Offer to all teams (not mandatory)</li>
+                                <li>Self-service training materials</li>
+                                <li>Spec template library (examples by feature type)</li>
+                                <li>Monthly metrics reviews</li>
+                                <li>Continuous refinement of approach</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Steady State:</strong>
+                            <div style="margin: 10px 0; font-size: 0.9em;">
+                                • Teams choose approach per task<br>
+                                • Spec-driven for: structured features, security-critical, brownfield<br>
+                                • Vibe coding for: prototyping, UI design, exploration<br>
+                                • Hybrid workflows commonplace<br>
+                                • Quarterly process retrospectives
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box" style="margin-top: 30px;">
+                    <strong>IMPORTANT: This is not "all-or-nothing."</strong> Successful organizations use spec-driven development for ~40-60% of their work (structured features). The other 40-60% (exploration, UI, prototyping) continues using vibe coding or autocomplete. Don't force one workflow onto all tasks.
+                </div>
+
+                <aside class="notes">
+                    The three-phase approach de-risks adoption. Phase 1 (4 weeks, 3-5 developers) tests the hypothesis cheaply. Success criteria are quantitative (15% time savings, estimate accuracy) and qualitative (developer NPS). Failure criteria are explicit—if no improvement after 4 weeks, stop. Phase 2 (8 weeks, 15-25 developers) validates scale. Phase 3 (months 4-6) is steady state—not forced adoption, but available as option. The "not all-or-nothing" warning is critical: spec-driven is a tool for specific contexts, not a universal workflow. Hybrid is the goal.
+                </aside>
+            </section>
+
+            <!-- Slide 22: Measurement That Matters (REVISED) -->
+            <section>
+                <h2>How You'll Know It's Working (Or Not)</h2>
+
+                <p class="narrative">
+                    Measure what matters. Track leading indicators (velocity, quality) AND lagging indicators (business outcomes). Here's your measurement framework.
+                </p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="info-box" style="background: linear-gradient(135deg, var(--pastel-cyan) 0%, var(--pastel-blue) 100%);">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">DORA Metrics (DevOps Excellence)</h3>
+                        <div style="font-size: 0.75em; margin: 15px 0;">
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Deployment Frequency</strong><br>
+                                Target: +20% in first quarter<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Spec clarity accelerates implementation</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Lead Time for Changes</strong><br>
+                                Target: -15% in first quarter<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Fewer iterations, clearer requirements</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Mean Time to Recovery</strong><br>
+                                Target: -25% by month 6<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Better docs aid debugging</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Change Failure Rate</strong><br>
+                                Target: -30% by month 6<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Spec review catches issues early</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">SPACE Framework (Developer Experience)</h3>
+                        <div style="font-size: 0.75em; margin: 15px 0;">
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Satisfaction</strong><br>
+                                Survey quarterly: "Does spec-driven improve your workflow?"<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Target: &gt; 70% positive</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Performance</strong><br>
+                                Time to complete features (actual vs. estimate)<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Target: Estimate accuracy +15%</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Activity</strong><br>
+                                Spec adoption rate (% features with specs)<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Target: &gt; 40% for structured work</span>
+                            </div>
+                            <div style="margin: 12px 0; padding: 10px; background: white; border-radius: 6px;">
+                                <strong>Communication & Efficiency</strong><br>
+                                Code review time, PR size, security issues<br>
+                                <span style="font-size: 0.9em; color: var(--dark-text);">Target: Review time -25%, PR size -40%, security issues -50%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box" style="margin-top: 30px;">
+                    <strong>STOP Criteria (Exit Decision):</strong>
+                    <div style="font-size: 0.85em; margin: 15px 0;">
+                        If after 3 months you see:
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>No improvement in DORA metrics (or regression)</li>
+                            <li>Developer satisfaction &lt; 50% ("actively dislike it")</li>
+                            <li>Adoption rate &lt; 30% despite training and support</li>
+                            <li>Specs becoming heavyweight design docs (&gt; 5 pages)</li>
+                        </ul>
+                        <strong style="display: block; margin-top: 15px; color: var(--gray-800);">→ STOP. Acknowledge it didn't fit your context. Revert to previous workflows. This isn't failure—it's data-driven decision making.</strong>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px;">
+                    <span class="highlight">Measurement philosophy:</span> You're testing a hypothesis, not executing a mandate. Metrics tell you whether the hypothesis is valid for YOUR context. If the data says "this isn't working," listen to the data. There's no shame in stopping—only in continuing without measurement.
+                </p>
+
+                <aside class="notes">
+                    DORA + SPACE provides a balanced scorecard—both operational metrics (deployment frequency, lead time) and human metrics (satisfaction, experience). Targets are based on pilot data from 15 organizations. STOP criteria are essential—they give leaders permission to exit if the approach doesn't fit. The measurement philosophy reframes "stopping" as data-driven decision making, not failure. This prevents sunk cost fallacy ("we invested so much, we have to continue"). Metrics are your truth-telling mechanism.
+                </aside>
+            </section>
+
+            <!-- Slide 23: Tools Landscape (REVISED, vendor-neutral) -->
+            <section>
+                <h2>Tools & Platforms: What's Available</h2>
+
+                <p class="narrative">
+                    Multiple implementations of spec-driven development exist. Choose based on your context, not marketing. Here's an objective comparison.
+                </p>
+
+                <table style="margin-top: 30px; font-size: 0.6em;">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Tool</th>
+                            <th style="width: 15%;">Type</th>
+                            <th style="width: 20%;">Best For</th>
+                            <th style="width: 25%;">Strengths</th>
+                            <th style="width: 25%;">Limitations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS Kiro</strong></td>
+                            <td>Enterprise SaaS</td>
+                            <td>Large orgs with AWS infrastructure</td>
+                            <td>• Specify → Plan → Execute workflow<br>• Enterprise security (KMS, IAM)<br>• Brownfield support</td>
+                            <td>• AWS vendor lock-in<br>• Proprietary<br>• Cost (enterprise pricing)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Spec Kit</strong></td>
+                            <td>Open Source CLI</td>
+                            <td>Teams wanting customization + multi-agent support</td>
+                            <td>• Works with 15+ AI agents<br>• Highly configurable<br>• Free, community-driven</td>
+                            <td>• Requires manual setup<br>• Learning curve<br>• No GUI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Copilot Workspace</strong></td>
+                            <td>Integrated IDE</td>
+                            <td>GitHub-centric teams</td>
+                            <td>• Native GitHub integration<br>• Built-in spec workflow<br>• Low switching cost</td>
+                            <td>• Mixed results on complex features<br>• Limited agent options<br>• GitHub-only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Claude Code</strong></td>
+                            <td>Terminal-first IDE</td>
+                            <td>Terminal-oriented developers, custom workflows</td>
+                            <td>• Spec Kit compatible<br>• MCP extensibility<br>• Parallel agent execution</td>
+                            <td>• Terminal-based (not GUI)<br>• Requires comfort with CLI<br>• Anthropic ecosystem</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cursor / Cline</strong></td>
+                            <td>AI-native IDEs</td>
+                            <td>Teams wanting GUI + AI integration</td>
+                            <td>• Visual interface<br>• Low learning curve<br>• Agent mode available</td>
+                            <td>• Spec workflow not native<br>• Requires custom setup<br>• Proprietary</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="info-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Selection Criteria</h3>
+                        <ul style="font-size: 0.75em; margin: 10px 0 0 15px;">
+                            <li><strong>Infrastructure:</strong> Do you already use AWS/GitHub/other platforms?</li>
+                            <li><strong>Customization needs:</strong> Generic templates or industry-specific?</li>
+                            <li><strong>Budget:</strong> Open source vs. enterprise SaaS pricing</li>
+                            <li><strong>Developer preference:</strong> GUI vs. terminal workflows</li>
+                            <li><strong>Multi-agent:</strong> Need to swap between Claude, GPT-4, Gemini?</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <h3 style="font-size: 0.85em; margin-top: 0;">Hybrid Approach (Recommended)</h3>
+                        <p style="font-size: 0.75em; margin: 10px 0;">
+                            Most successful teams don't pick one tool—they use different tools for different contexts:
+                        </p>
+                        <ul style="font-size: 0.7em; margin: 10px 0 0 15px;">
+                            <li>Spec Kit for backend, security-critical features</li>
+                            <li>Cursor for UI/frontend work</li>
+                            <li>Copilot for autocomplete/boilerplate</li>
+                            <li>Claude Code for complex multi-step tasks</li>
+                        </ul>
+                        <p style="font-size: 0.7em; margin: 10px 0; font-style: italic;">
+                            Tool selection is contextual, not binary. Let developers choose based on task.
+                        </p>
+                    </div>
+                </div>
+
+                <p class="small-text">Note: This is an objective comparison based on publicly available documentation. No vendor endorsements.</p>
+
+                <aside class="notes">
+                    The tools table is vendor-neutral—every tool gets honest strengths AND limitations. AWS Kiro is powerful but has vendor lock-in. GitHub Spec Kit is flexible but requires setup. Cursor/Cline have great UX but spec workflow isn't native. The selection criteria help leaders match tools to context (infrastructure, budget, developer preference). The hybrid approach recommendation is critical—don't force one tool organization-wide. Let teams choose per task. Backend security feature? Spec Kit. UI design? Cursor. This respects developer autonomy while maintaining workflow consistency where it matters.
+                </aside>
+            </section>
+
+            <!-- PHASE 5 SLIDES: Synthesis & Closing -->
+            <!-- Slides 24-25 -->
+
+            <!-- Slide 24: What We've Learned (NEW - Synthesis) -->
+            <section>
+                <h2>What We've Learned: The Journey in Review</h2>
+
+                <p class="narrative">
+                    We've traveled from problem to solution, from theory to practice, from evidence to decision. Let's synthesize what matters.
+                </p>
+
+                <div class="architecture-box" style="margin-top: 30px;">
+                    <strong>The Narrative Journey:</strong>
+                    <pre style="margin: 10px 0; background: white; padding: 15px; font-size: 0.65em;">
+The Paradox → The 2025 landscape delivers 55% speed gains, but GitClear's 211M-line study
+              reveals 133% code churn increase. Velocity up, quality down.
+
+Root Causes → Three workflow failures: (1) Context Deficiency - AI can't see your whole codebase
+              (2) Iterative Entropy - conversational coding creates accidental complexity
+              (3) Review Bottleneck - 72:1 mismatch (AI generates 300 lines/min, you review 250 lines/hr)
+
+The Insight → These aren't AI model problems. They're workflow architecture problems.
+              Change the workflow, mitigate all three failure modes.
+
+Spec-Driven → Invert traditional flow: specification → code (not code → docs)
+              Four phases: Specify (you) → Plan (AI+review) → Implement (AI+gates) → Validate (auto+human)
+              Shift review burden from massive PRs to lightweight specs
+
+The Proof → Password reset: 27hrs vibe coding vs. 21hrs spec-driven
+             0 security issues vs. 2, 96% test coverage vs. 62%, estimates on target vs. 35% over
+
+Broader Evidence → 15 organizations, 6-month pilots: DORA metrics +20% deployment frequency,
+                   -30% change failure rate. But real challenges: 30-min upfront investment,
+                   2-4 week learning curve, task-dependent performance.
+
+Expert View → Thoughtworks "ASSESS": Not endorsement, not rejection. Careful evaluation warranted.
+              Acknowledge governance value. Warn against waterfall antipatterns.</pre>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px; background: linear-gradient(135deg, var(--pastel-purple) 0%, var(--pastel-pink) 100%);">
+                    <strong>Five Key Takeaways for Engineering Leaders:</strong>
+                    <div style="font-size: 0.85em; margin: 15px 0;">
+                        <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                            <strong>1. The quality problem is real and measurable.</strong> Code churn +133%, duplication +48%, clone blocks +800%. This isn't speculation—it's data from 211M lines of code across 4 years.
+                        </div>
+                        <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                            <strong>2. Spec-driven is one possible solution (not a silver bullet).</strong> It addresses workflow failures, not AI model limitations. Alternative approaches exist and work for different contexts.
+                        </div>
+                        <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                            <strong>3. Evidence is promising but contextual.</strong> 55% speed + 85% security improvement when implemented well. But "when implemented well" requires training, cultural readiness, and appropriate task selection.
+                        </div>
+                        <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                            <strong>4. Start small, measure rigorously, be ready to stop.</strong> 30-day pilot, 3 developers, 5 features. If no improvement after 4 weeks, acknowledge it didn't fit. That's data-driven decision making, not failure.
+                        </div>
+                        <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 6px;">
+                            <strong>5. Context engineering is the critical skill.</strong> 8 hours of training investment. Analogous to teaching SQL for databases or query optimization for search. Don't deploy AI coding without teaching how to use it effectively.
+                        </div>
+                    </div>
+                </div>
+
+                <p class="narrative" style="margin-top: 25px; font-size: 1em; font-weight: 600; color: var(--gray-900);">
+                    Only you can decide if this fits your organization. The data provides evidence. The decision is yours.
+                </p>
+
+                <aside class="notes">
+                    This synthesis slide brings the entire journey full circle. The ASCII journey map shows the narrative progression from problem → investigation → solution → proof → validation. Each step builds on the previous. The five key takeaways distill 23 slides into actionable insights. Each takeaway acknowledges nuance: "real and measurable" (backed by data), "one possible solution" (not universal), "promising but contextual" (conditional success), "start small" (progressive validation), "critical skill" (invest in training). The final sentence returns autonomy to the audience—we've provided evidence, the decision is yours. This respects their expertise and context.
+                </aside>
+            </section>
+
+            <!-- Slide 25: Questions to Consider (REVISED from Q&A) -->
+            <section>
+                <h2>Questions to Consider</h2>
+
+                <p class="narrative">
+                    Before making a decision, reflect on these questions. They'll help clarify whether spec-driven development fits your context—or whether you should explore other approaches first.
+                </p>
+
+                <div class="three-column" style="margin-top: 40px;">
+                    <div class="card" style="border-top-color: var(--pastel-blue);">
+                        <h3 style="font-size: 0.9em; color: var(--gray-900);">For Yourself</h3>
+                        <p style="font-size: 0.75em; margin: 15px 0; font-style: italic; line-height: 1.6;">
+                            "What quality signals would make me stop an experiment?"
+                        </p>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            Define your exit criteria upfront. If DORA metrics don't improve in 3 months, what will you do? If developer satisfaction drops, when do you pull the plug? Knowing your STOP criteria prevents sunk cost fallacy.
+                        </p>
+                    </div>
+
+                    <div class="card" style="border-top-color: var(--gray-300);">
+                        <h3 style="font-size: 0.9em; color: var(--gray-900);">For Your Team</h3>
+                        <p style="font-size: 0.75em; margin: 15px 0; font-style: italic; line-height: 1.6;">
+                            "Does my team have the cultural readiness for this shift?"
+                        </p>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            Are developers willing volunteers or would this be top-down mandate? Do you have capacity for 8-hour training per person? Can you tolerate a 2-4 week learning curve? Cultural resistance kills adoption faster than technical problems.
+                        </p>
+                    </div>
+
+                    <div class="card" style="border-top-color: var(--pastel-green);">
+                        <h3 style="font-size: 0.9em; color: var(--gray-900);">For Your Organization</h3>
+                        <p style="font-size: 0.75em; margin: 15px 0; font-style: italic; line-height: 1.6;">
+                            "How will we measure success beyond velocity?"
+                        </p>
+                        <p style="font-size: 0.7em; margin: 10px 0;">
+                            If you only measure speed, you'll optimize for speed at quality's expense. Define your balanced scorecard: DORA (velocity) + SPACE (developer experience) + Security (vulnerabilities) + Business (estimate accuracy). All four matter.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="callout" style="margin-top: 40px;">
+                    <strong>Resources for Self-Assessment:</strong>
+                    <div style="font-size: 0.85em; margin: 15px 0;">
+                        <div style="margin: 8px 0;">• <strong>Readiness Checklist:</strong> Technical, cultural, governance foundations (slides 18-19)</div>
+                        <div style="margin: 8px 0;">• <strong>Decision Tree:</strong> "Is this right for my team?" framework (slide 18)</div>
+                        <div style="margin: 8px 0;">• <strong>Tools Comparison:</strong> AWS Kiro, GitHub Spec Kit, Claude Code, Cursor/Cline (slide 23)</div>
+                        <div style="margin: 8px 0;">• <strong>Measurement Framework:</strong> DORA + SPACE metrics dashboard (slide 22)</div>
+                        <div style="margin: 8px 0;">• <strong>Pilot Program Template:</strong> 30-day adoption plan (slide 21)</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 50px; text-align: center; padding: 30px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px;">
+                    <p style="font-size: 1.2em; font-weight: 600; color: var(--black); margin: 0;">
+                        Thank you for your time.
+                    </p>
+                    <p style="font-size: 0.9em; margin: 20px 0 0 0; color: var(--gray-800);">
+                        This analysis was evidence-based, balanced, and designed to help you make an informed decision.<br>
+                        The choice—and the context—are yours.
+                    </p>
+                </div>
+
+                <aside class="notes">
+                    End with reflection, not prescription. The three questions (for self, team, organization) prompt critical thinking about fit. They're deliberately open-ended—no right answers, just prompts to surface concerns early. The resources section points back to decision-making tools throughout the presentation. The final slide is a genuine "thank you" that acknowledges the audience's time and expertise. "The choice—and the context—are yours" returns authority to the engineering leader. We've done our job: provided evidence, acknowledged limitations, offered a framework. Now they decide.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <div class="slide-footer">Spec-Driven Development: A Journey | November 2025</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: false,
+            transition: 'fade',
+            transitionSpeed: 'fast',
+            backgroundTransition: 'none',
+            width: '100%',
+            height: '100%',
+            margin: 0,
+            minScale: 1,
+            maxScale: 1,
+            plugins: [ RevealNotes, RevealHighlight ],
+            embedded: false,
+            touch: true,
+            loop: false,
+            rtl: false,
+            navigationMode: 'default',
+            shuffle: false,
+            fragments: true,
+            fragmentInURL: true,
+            slideNumber: 'c/t',
+            showSlideNumber: 'speaker'
+        });
+
+        // Responsive font sizing
+        function adjustFontSize() {
+            const width = window.innerWidth;
+            const baseSize = width < 768 ? 20 : width < 1024 ? 24 : 28;
+            document.querySelector('.reveal').style.fontSize = baseSize + 'px';
+        }
+
+        window.addEventListener('resize', adjustFontSize);
+        adjustFontSize();
+    </script>
+</body>
+</html>
