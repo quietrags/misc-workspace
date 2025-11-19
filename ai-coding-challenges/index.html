@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Augmented Coding Challenges - Documentation Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            border-color: var(--primary-color);
+        }
+
+        .doc-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-card-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .doc-card-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .doc-card-link:hover {
+            background: #1d4ed8;
+            text-decoration: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 3rem 0 1.5rem;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border-left: 5px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 2rem 0;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: var(--bg-color);
+            border-left: 4px solid var(--success-color);
+            border-radius: 0.5rem;
+        }
+
+        .feature-list li::before {
+            content: "✅ ";
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                🚀 AI Coding Challenges
+            </a>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#getting-started">Get Started</a></li>
+                <li><a href="#challenges">Challenges</a></li>
+                <li><a href="#documentation">Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🛠️ AI-Augmented Coding Challenge Framework</h1>
+            <p>Comprehensive documentation for evaluating and demonstrating cutting-edge AI-assisted software engineering capabilities.</p>
+            <p style="margin-top: 1rem;">Master GitHub Copilot (Chat, Agentic, Workspace) and similar AI coding tools through real-world enterprise challenges.</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Engineering Challenges</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--secondary-color);">
+                <div class="stat-value" style="color: var(--secondary-color);">3</div>
+                <div class="stat-label">AI Modes to Master</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <div class="stat-value" style="color: var(--success-color);">6-10h</div>
+                <div class="stat-label">Per Challenge</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning-color);">
+                <div class="stat-value" style="color: var(--warning-color);">Choose 2</div>
+                <div class="stat-label">Out of 3 Challenges</div>
+            </div>
+        </div>
+
+        <!-- Overview Section -->
+        <section id="overview">
+            <div class="section-header">
+                <span class="section-icon">📖</span>
+                <h2 class="section-title">Getting Started</h2>
+            </div>
+
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <div class="doc-card-icon">🚀</div>
+                    <h3 class="doc-card-title">Quick Start Guide</h3>
+                    <p class="doc-card-description">Get up and running in 5 minutes. Learn which challenge to choose, essential reading, and quick setup instructions.</p>
+                    <a href="quick-start.html" class="doc-card-link">Start Here →</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-icon">🛠️</div>
+                    <h3 class="doc-card-title">AI Modes Deep Dive</h3>
+                    <p class="doc-card-description">Interactive guide to mastering Chat, Agentic, and Workspace modes. Learn when to use each mode with vivid examples.</p>
+                    <a href="ai-modes-guide.html" class="doc-card-link">Learn AI Modes →</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-icon">📋</div>
+                    <h3 class="doc-card-title">Problem Statement</h3>
+                    <p class="doc-card-description">Theoretical foundation, research questions, methodology, and the science behind AI-augmented coding challenges.</p>
+                    <a href="problem-statement.html" class="doc-card-link">Read Theory →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenges Section -->
+        <section id="challenges">
+            <div class="section-header">
+                <span class="section-icon">🏆</span>
+                <h2 class="section-title">The Three Challenges</h2>
+            </div>
+
+            <p>Choose 2 out of 3 challenges. Each is designed to push different aspects of AI-augmented development.</p>
+
+            <div class="doc-grid">
+                <div class="doc-card" style="border-left: 5px solid #3b82f6;">
+                    <div class="doc-card-icon">🔄</div>
+                    <h3 class="doc-card-title">Challenge 1: Legacy Modernization</h3>
+                    <p class="doc-card-description">
+                        <strong>Difficulty:</strong> High | <strong>Time:</strong> 6-8 hours<br><br>
+                        Extract microservices from a 15K LOC Django monolith. Implement API gateway, testing, and maintain backward compatibility.
+                    </p>
+                    <div class="tags mb-1">
+                        <span class="badge badge-primary">Microservices</span>
+                        <span class="badge badge-secondary">Refactoring</span>
+                    </div>
+                    <a href="challenges/challenge-1.html" class="doc-card-link">View Challenge →</a>
+                </div>
+
+                <div class="doc-card" style="border-left: 5px solid #8b5cf6;">
+                    <div class="doc-card-icon">⚡</div>
+                    <h3 class="doc-card-title">Challenge 2: Distributed Systems</h3>
+                    <p class="doc-card-description">
+                        <strong>Difficulty:</strong> Very High | <strong>Time:</strong> 8-10 hours<br><br>
+                        Build a fault-tolerant event processing pipeline. Handle 10K events/sec with exactly-once semantics and chaos testing.
+                    </p>
+                    <div class="tags mb-1">
+                        <span class="badge badge-primary">Distributed</span>
+                        <span class="badge badge-secondary">Real-time</span>
+                    </div>
+                    <a href="challenges/challenge-2.html" class="doc-card-link">View Challenge →</a>
+                </div>
+
+                <div class="doc-card" style="border-left: 5px solid #06b6d4;">
+                    <div class="doc-card-icon">🔐</div>
+                    <h3 class="doc-card-title">Challenge 3: Security & Performance</h3>
+                    <p class="doc-card-description">
+                        <strong>Difficulty:</strong> High | <strong>Time:</strong> 6-8 hours<br><br>
+                        Fix OWASP Top 10 vulnerabilities and optimize performance to <1s page load. Implement auth, rate limiting, and monitoring.
+                    </p>
+                    <div class="tags mb-1">
+                        <span class="badge badge-danger">Security</span>
+                        <span class="badge badge-warning">Performance</span>
+                    </div>
+                    <a href="challenges/challenge-3.html" class="doc-card-link">View Challenge →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="documentation">
+            <div class="section-header">
+                <span class="section-icon">📚</span>
+                <h2 class="section-title">Documentation & Resources</h2>
+            </div>
+
+            <h3>📊 Research & Evaluation</h3>
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <div class="doc-card-icon">🔬</div>
+                    <h3 class="doc-card-title">AI Coding Effectiveness</h3>
+                    <p class="doc-card-description">Research on when and how AI augmentation provides maximum value. Task categorization, effectiveness data, and best practices.</p>
+                    <a href="research/ai-effectiveness.html" class="doc-card-link">Read Research →</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-icon">📊</div>
+                    <h3 class="doc-card-title">Scoring & Evaluation Guide</h3>
+                    <p class="doc-card-description">Comprehensive rubrics for evaluating submissions. 5-dimension scoring system, calibration guidelines, and feedback templates.</p>
+                    <a href="evaluation/scoring-guide.html" class="doc-card-link">View Rubrics →</a>
+                </div>
+            </div>
+
+            <h3 class="mt-3">📝 Templates</h3>
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <div class="doc-card-icon">📄</div>
+                    <h3 class="doc-card-title">Submission Template</h3>
+                    <p class="doc-card-description">Complete template for submitting your challenge solutions. Includes technical implementation, testing, AI utilization, and reflection sections.</p>
+                    <a href="templates/submission-template.html" class="doc-card-link">Get Template →</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-icon">📊</div>
+                    <h3 class="doc-card-title">AI Usage Log</h3>
+                    <p class="doc-card-description">Track your AI interactions during challenges. Helps maximize learning and contributes to research on effective AI-augmented development.</p>
+                    <a href="templates/ai-usage-log.html" class="doc-card-link">Get Template →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features -->
+        <section id="features">
+            <div class="section-header">
+                <span class="section-icon">✨</span>
+                <h2 class="section-title">Key Features</h2>
+            </div>
+
+            <ul class="feature-list">
+                <li><strong>AI-Native Challenges:</strong> Problems specifically designed where AI augmentation provides significant advantage (91/100 AI advantage scores)</li>
+                <li><strong>Mode Diversity:</strong> Challenges require strategic use of Chat, Agentic, and Workspace modes</li>
+                <li><strong>Real-World Scenarios:</strong> Based on actual enterprise engineering challenges, not toy problems</li>
+                <li><strong>Comprehensive Evaluation:</strong> 5-dimension rubrics measuring correctness, quality, AI utilization, testing, and documentation</li>
+                <li><strong>Research-Backed:</strong> Built on evidence from GitHub (2024), GitClear (2025), Thoughtworks (2025)</li>
+                <li><strong>Quality Focus:</strong> Tests both speed AND quality, with mandatory >80% test coverage and security scanning</li>
+            </ul>
+        </section>
+
+        <!-- Quick Links -->
+        <section id="quick-links">
+            <div class="section-header">
+                <span class="section-icon">🔗</span>
+                <h2 class="section-title">Quick Reference</h2>
+            </div>
+
+            <div class="card">
+                <h4>Essential Links</h4>
+                <ul>
+                    <li><a href="quick-start.html">Quick Start (5-minute setup)</a></li>
+                    <li><a href="ai-modes-guide.html">AI Modes Deep Dive</a></li>
+                    <li><a href="problem-statement.html">Complete Problem Statement</a></li>
+                    <li><a href="evaluation/scoring-guide.html">How You'll Be Evaluated</a></li>
+                </ul>
+
+                <h4 class="mt-2">Choose Your Challenge</h4>
+                <ul>
+                    <li><a href="challenges/challenge-1.html">Challenge 1: Legacy Modernization</a> (6-8 hours)</li>
+                    <li><a href="challenges/challenge-2.html">Challenge 2: Distributed Systems</a> (8-10 hours)</li>
+                    <li><a href="challenges/challenge-3.html">Challenge 3: Security & Performance</a> (6-8 hours)</li>
+                </ul>
+
+                <h4 class="mt-2">Templates & Tools</h4>
+                <ul>
+                    <li><a href="templates/submission-template.html">Submission Template</a></li>
+                    <li><a href="templates/ai-usage-log.html">AI Usage Log Template</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <div class="alert alert-success text-center">
+            <h3>Ready to Push the Limits of AI-Augmented Coding?</h3>
+            <p style="margin: 1rem 0;">Start with the <a href="quick-start.html" style="font-weight: 600;">Quick Start Guide</a> or jump directly to <a href="challenges/challenge-1.html" style="font-weight: 600;">Challenge 1</a>.</p>
+            <div style="margin-top: 1.5rem;">
+                <a href="quick-start.html" class="btn btn-primary" style="margin-right: 1rem;">Get Started</a>
+                <a href="ai-modes-guide.html" class="btn btn-secondary">Learn AI Modes</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>AI-Augmented Coding Challenge Framework | Created: 2025-11-19 | Version: 1.0</p>
+            <p>Push the limits of AI-augmented coding. Build the future. 🚀</p>
+        </div>
+    </div>
+</body>
+</html>
