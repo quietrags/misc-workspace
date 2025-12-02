@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoring & Evaluation Guide - AI Coding Challenges</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-brand">
+                🚀 AI Coding Challenges
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../quick-start.html">Quick Start</a></li>
+                <li><a href="../ai-modes-guide.html">AI Modes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>→</span> <a href="../evaluation/">Evaluation</a> <span>→</span> Scoring Guide
+        </div>
+
+        <div class="content-wrapper">
+            <h1 id="evaluation-&-scoring-guide">Evaluation & Scoring Guide</h1>
+
+<p><strong>For evaluators assessing AI coding challenge submissions</strong></p>
+
+<hr>
+
+<h2 id="🎯-evaluation-philosophy">🎯 Evaluation Philosophy</h2>
+
+<h3 id="core-principles">Core Principles</h3>
+
+<ol>
+<li><strong>Evidence-Based:</strong> Score based on objective criteria and measurable outcomes</li>
+<li><strong>Consistent:</strong> Apply rubrics uniformly across all submissions</li>
+<li><strong>Holistic:</strong> Consider context and trade-offs, not just checklist completion</li>
+<li><strong>Constructive:</strong> Provide actionable feedback for improvement</li>
+<li><strong>AI-Aware:</strong> Evaluate both AI usage effectiveness and output quality</li>
+</ol>
+
+<h3 id="what-we're-measuring">What We're Measuring</h3>
+
+<ul>
+<li>✅ <strong>Functional Correctness:</strong> Does it work as specified?</li>
+<li>✅ <strong>Code Quality:</strong> Is it maintainable, secure, performant?</li>
+<li>✅ <strong>AI Effectiveness:</strong> Did they use AI strategically?</li>
+<li>✅ <strong>Testing Rigor:</strong> Are quality guardrails in place?</li>
+<li>✅ <strong>Documentation:</strong> Can others understand and operate it?</li>
+</ul>
+
+<h3 id="what-we're-not-measuring">What We're NOT Measuring</h3>
+
+<ul>
+<li>❌ Speed alone (quality matters more)</li>
+<li>❌ Lines of code (conciseness valued)</li>
+<li>❌ Technology choices (within reason)</li>
+<li>❌ Over-engineering (YAGNI principle)</li>
+</ul>
+
+<hr>
+
+<h2 id="📋-evaluation-process">📋 Evaluation Process</h2>
+
+<h3 id="phase-1-initial-review-30-minutes">Phase 1: Initial Review (30 minutes)</h3>
+
+<p><strong>Objectives:</strong></p>
+<ul>
+<li>Verify submission completeness</li>
+<li>Run automated checks</li>
+<li>Understand architecture approach</li>
+</ul>
+
+<p><strong>Checklist:</strong></p>
+<ul>
+<li>[ ] Submission template completed</li>
+<li>[ ] Code repository accessible</li>
+<li>[ ] All required deliverables present</li>
+<li>[ ] Tests can be run</li>
+<li>[ ] Application can be started</li>
+</ul>
+
+<p><strong>Automated Checks:</strong></p>
+<pre><code>
+# Clone repository
+git clone [submission-repo]
+cd [submission-repo]
+
+# Check for required files
+ls -la README.md
+ls -la tests/
+
+# Run automated quality checks
+npm run lint  # or equivalent
+npm test
+npm run security-scan  # if available
+
+# Check test coverage
+npm run test:coverage
+</code></pre>
+
+<p><strong>Initial Red Flags:</strong></p>
+<ul>
+<li>🚩 No tests</li>
+<li>🚩 Tests failing</li>
+<li>🚩 No documentation</li>
+<li>🚩 Security vulnerabilities (critical)</li>
+<li>🚩 Application doesn't start</li>
+</ul>
+
+<p><strong>If red flags present:</strong> Document in evaluation notes, may result in automatic point deductions.</p>
+
+<hr>
+
+<h3 id="phase-2-functional-evaluation-60-minutes">Phase 2: Functional Evaluation (60 minutes)</h3>
+
+<p><strong>Test each functional requirement from the challenge:</strong></p>
+
+<h4 id="for-challenge-1-legacy-modernization">For Challenge 1: Legacy Modernization</h4>
+
+<p><strong>Service Extraction (Core requirement):</strong></p>
+<ul>
+<li>[ ] Service 1 extracted and running independently</li>
+<li>[ ] Service 2 extracted and running independently</li>
+<li>[ ] Service 3 extracted and running independently</li>
+<li>[ ] Services communicate correctly</li>
+<li>[ ] API Gateway routing works</li>
+</ul>
+
+<p><strong>Test Scenarios:</strong></p>
+<ol>
+<li>Create order through API Gateway → Verify flows through all services</li>
+<li>Kill one service → Verify graceful failure</li>
+<li>Check database for data consistency</li>
+<li>Verify backward compatibility with legacy endpoints</li>
+</ol>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>All services working: 20-25 points</li>
+<li>2 services working: 15-19 points</li>
+<li>1 service working: 10-14 points</li>
+<li>Broken: 0-9 points</li>
+</ul>
+
+<h4 id="for-challenge-2-distributed-systems">For Challenge 2: Distributed Systems</h4>
+
+<p><strong>Core Functionality:</strong></p>
+<ul>
+<li>[ ] Event ingestion working</li>
+<li>[ ] Event processing working</li>
+<li>[ ] State persistence working</li>
+<li>[ ] Fault tolerance demonstrated</li>
+</ul>
+
+<p><strong>Test Scenarios:</strong></p>
+<ol>
+<li>Send 1000 events → Verify all processed</li>
+<li>Send duplicate events → Verify deduplicated</li>
+<li>Kill worker mid-processing → Verify auto-recovery</li>
+<li>Send malformed event → Verify dead letter queue</li>
+<li>Check metrics endpoint → Verify reporting</li>
+</ol>
+
+<p><strong>Chaos Tests:</strong></p>
+<pre><code>
+# Run provided chaos tests
+npm run chaos:network-partition
+npm run chaos:node-failure
+npm run chaos:database-outage
+</code></pre>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>All scenarios pass + chaos tests: 20-25 points</li>
+<li>Most scenarios pass: 15-19 points</li>
+<li>Core working, chaos fails: 10-14 points</li>
+<li>Major issues: 0-9 points</li>
+</ul>
+
+<h4 id="for-challenge-3-security-&-performance">For Challenge 3: Security & Performance</h4>
+
+<p><strong>Security Validation:</strong></p>
+<pre><code>
+# Run security scans
+npm audit
+snyk test
+owasp-zap-scan.sh
+
+# Manual penetration testing
+curl -X POST &#39;/api/login&#39; -d &quot;username=admin&#39; OR 1=1--&quot;
+# Should NOT result in SQL injection
+</code></pre>
+
+<p><strong>Performance Validation:</strong></p>
+<pre><code>
+# Run Lighthouse
+lighthouse http://localhost:3000 --output json
+
+# Run load tests
+k6 run load-test.js
+
+# Check page load
+curl -w &quot;@curl-format.txt&quot; -o /dev/null -s http://localhost:3000
+</code></pre>
+
+<p><strong>Scoring Matrix:</strong></p>
+
+<table>
+<thead><tr>
+<th>Criteria</th>
+<th>Points</th>
+</tr></thead><tbody>
+<tr>
+<td>All critical vulns fixed</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Authentication implemented</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Performance <1s page load</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Security headers present</td>
+<td>3</td>
+</tr>
+<tr>
+<td>No high/critical vulns in scan</td>
+<td>2</td>
+</tr>
+</tbody></table>
+
+<p><strong>Total:</strong> 20-25 points if all criteria met</p>
+
+<hr>
+
+<h3 id="phase-3-code-quality-assessment-45-minutes">Phase 3: Code Quality Assessment (45 minutes)</h3>
+
+<p><strong>Use combination of automated tools and manual review:</strong></p>
+
+<h4 id="automated-code-quality">Automated Code Quality</h4>
+
+<p><strong>Tools:</strong></p>
+<ul>
+<li>SonarQube / CodeClimate for quality metrics</li>
+<li>ESLint / Pylint for linting</li>
+<li>Prettier for formatting</li>
+<li>Security scanners (Snyk, Bandit)</li>
+</ul>
+
+<p><strong>Run Analysis:</strong></p>
+<pre><code>
+# SonarQube
+sonar-scanner
+
+# Or CodeClimate
+codeclimate analyze
+
+# Language-specific linters
+eslint .
+pylint **/*.py
+golangci-lint run
+</code></pre>
+
+<p><strong>Key Metrics:</strong></p>
+
+<table>
+<thead><tr>
+<th>Metric</th>
+<th>Excellent</th>
+<th>Good</th>
+<th>Adequate</th>
+<th>Poor</th>
+</tr></thead><tbody>
+<tr>
+<td>Maintainability Index</td>
+<td>>70</td>
+<td>50-70</td>
+<td>30-50</td>
+<td><30</td>
+</tr>
+<tr>
+<td>Cyclomatic Complexity</td>
+<td><10 avg</td>
+<td>10-15</td>
+<td>15-20</td>
+<td>>20</td>
+</tr>
+<tr>
+<td>Code Duplication</td>
+<td><3%</td>
+<td>3-5%</td>
+<td>5-10%</td>
+<td>>10%</td>
+</tr>
+<tr>
+<td>Security Issues</td>
+<td>0</td>
+<td>1-2 low</td>
+<td>3-5 low</td>
+<td>Any medium+</td>
+</tr>
+<tr>
+<td>Test Coverage</td>
+<td>>80%</td>
+<td>60-80%</td>
+<td>40-60%</td>
+<td><40%</td>
+</tr>
+</tbody></table>
+
+<h4 id="manual-code-review">Manual Code Review</h4>
+
+<p><strong>Review 3-5 critical files for:</strong></p>
+
+<ol>
+<li><strong>Architecture & Design</strong></li>
+<ul>
+<li>[ ] Clear separation of concerns</li>
+<li>[ ] Appropriate use of design patterns</li>
+<li>[ ] Low coupling, high cohesion</li>
+<li>[ ] SOLID principles followed</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>Error Handling</strong></li>
+<ul>
+<li>[ ] Errors properly caught and logged</li>
+<li>[ ] Graceful degradation</li>
+<li>[ ] User-friendly error messages</li>
+<li>[ ] No swallowed exceptions</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>Security</strong></li>
+<ul>
+<li>[ ] Input validation present</li>
+<li>[ ] No SQL injection vectors</li>
+<li>[ ] No XSS vulnerabilities</li>
+<li>[ ] Secrets not hardcoded</li>
+<li>[ ] Authentication/authorization correct</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>Performance</strong></li>
+<ul>
+<li>[ ] No obvious N+1 queries</li>
+<li>[ ] Appropriate use of caching</li>
+<li>[ ] Async operations where needed</li>
+<li>[ ] Resource cleanup (connections, files)</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>Readability</strong></li>
+<ul>
+<li>[ ] Clear naming conventions</li>
+<li>[ ] Appropriate comments (not too many, not too few)</li>
+<li>[ ] Logical code organization</li>
+<li>[ ] Consistent formatting</li>
+</ul>
+</ol>
+
+<p><strong>Scoring Guide:</strong></p>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>Clean, professional code</li>
+<li>Best practices throughout</li>
+<li>Minimal technical debt</li>
+<li>Production-ready quality</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Well-structured code</li>
+<li>Some minor improvements possible</li>
+<li>Low technical debt</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Functional but needs refactoring</li>
+<li>Multiple code smells</li>
+<li>Medium technical debt</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Hard to maintain</li>
+<li>Multiple anti-patterns</li>
+<li>High technical debt</li>
+</ul>
+
+<hr>
+
+<h3 id="phase-4-ai-utilization-assessment-30-minutes">Phase 4: AI Utilization Assessment (30 minutes)</h3>
+
+<p><strong>Review AI usage documentation:</strong></p>
+
+<h4 id="evaluation-criteria">Evaluation Criteria</h4>
+
+<ol>
+<li><strong>Strategic Mode Selection (5 points)</strong></li>
+<ul>
+<li>Used appropriate modes for different tasks</li>
+<li>Evidence of understanding mode strengths</li>
+<li>Not over-reliant on single mode</li>
+</ul>
+</ol>
+
+<p><strong>Questions to ask:</strong></p>
+<ul>
+<li>Did they use Workspace for planning?</li>
+<li>Did they use Agentic for multi-file changes?</li>
+<li>Did they use Chat for quick queries?</li>
+</ul>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Excellent mode selection: 5 points</li>
+<li>Good but could improve: 3-4 points</li>
+<li>Poor mode selection: 0-2 points</li>
+</ul>
+
+<ol>
+<li><strong>Prompt Engineering Quality (8 points)</strong></li>
+<ul>
+<li>Specific, context-rich prompts</li>
+<li>Appropriate level of detail</li>
+<li>Evidence of iteration and refinement</li>
+</ul>
+</ol>
+
+<p><strong>Review prompt examples in submission:</strong></p>
+<pre><code>
+Bad Prompt:
+&quot;Add authentication&quot;
+
+Good Prompt:
+&quot;Implement JWT authentication for this Express API with:
+- bcrypt password hashing
+- Access token (15min) + refresh token (7 days)
+- Role-based authorization middleware
+- Rate limiting on auth endpoints
+- Comprehensive tests&quot;
+</code></pre>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Advanced prompt engineering: 7-8 points</li>
+<li>Good prompts with room for improvement: 5-6 points</li>
+<li>Basic prompts: 3-4 points</li>
+<li>Poor prompts: 0-2 points</li>
+</ul>
+
+<ol>
+<li><strong>Output Validation (4 points)</strong></li>
+<ul>
+<li>Evidence of reviewing AI-generated code</li>
+<li>Modifications made where appropriate</li>
+<li>Testing of AI outputs</li>
+<li>Quality control processes</li>
+</ul>
+</ol>
+
+<p><strong>Look for:</strong></p>
+<ul>
+<li>Did they blindly use AI code, or review it?</li>
+<li>Did they add tests for AI-generated code?</li>
+<li>Did they fix AI mistakes?</li>
+</ul>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Rigorous validation: 4 points</li>
+<li>Some validation: 2-3 points</li>
+<li>Little validation: 0-1 points</li>
+</ul>
+
+<ol>
+<li><strong>Learning & Reflection (3 points)</strong></li>
+<ul>
+<li>Documented learnings about AI usage</li>
+<li>Identified AI strengths and weaknesses</li>
+<li>Showed improvement over time</li>
+</ul>
+</ol>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Deep insights: 3 points</li>
+<li>Some insights: 2 points</li>
+<li>Minimal reflection: 0-1 points</li>
+</ul>
+
+<p><strong>Total AI Utilization: 20 points</strong></p>
+
+<hr>
+
+<h3 id="phase-5-testing-&-documentation-30-minutes">Phase 5: Testing & Documentation (30 minutes)</h3>
+
+<h4 id="testing-evaluation-15-points">Testing Evaluation (15 points)</h4>
+
+<p><strong>Test Coverage (5 points):</strong></p>
+<pre><code>
+# Run coverage report
+npm run test:coverage
+</code></pre>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>>80% coverage: 5 points</li>
+<li>60-80%: 4 points</li>
+<li>40-60%: 2-3 points</li>
+<li><40%: 0-1 points</li>
+</ul>
+
+<p><strong>Test Quality (5 points):</strong></p>
+
+<p>Review test files for:</p>
+<ul>
+<li>[ ] Tests are meaningful (not just for coverage)</li>
+<li>[ ] Edge cases covered</li>
+<li>[ ] Integration tests present</li>
+<li>[ ] Tests are maintainable</li>
+<li>[ ] Good test naming</li>
+</ul>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Excellent test quality: 5 points</li>
+<li>Good tests: 3-4 points</li>
+<li>Basic tests: 1-2 points</li>
+<li>Poor tests: 0 points</li>
+</ul>
+
+<p><strong>Test Types (5 points):</strong></p>
+<ul>
+<li>[ ] Unit tests</li>
+<li>[ ] Integration tests</li>
+<li>[ ] E2E tests (if applicable)</li>
+<li>[ ] Performance tests (if applicable)</li>
+<li>[ ] Security tests (if applicable)</li>
+</ul>
+
+<p><strong>Scoring:</strong></p>
+<ul>
+<li>Comprehensive test suite: 5 points</li>
+<li>Multiple test types: 3-4 points</li>
+<li>Only unit tests: 1-2 points</li>
+<li>Minimal tests: 0 points</li>
+</ul>
+
+<h4 id="documentation-evaluation-15-points">Documentation Evaluation (15 points)</h4>
+
+<p><strong>README Quality (5 points):</strong></p>
+<ul>
+<li>[ ] Clear setup instructions</li>
+<li>[ ] Prerequisites listed</li>
+<li>[ ] Quick start guide</li>
+<li>[ ] Troubleshooting section</li>
+</ul>
+
+<p><strong>Architecture Documentation (5 points):</strong></p>
+<ul>
+<li>[ ] System architecture diagram</li>
+<li>[ ] Component descriptions</li>
+<li>[ ] Data flow explanations</li>
+<li>[ ] Technology choices justified</li>
+</ul>
+
+<p><strong>API Documentation (3 points):</strong></p>
+<ul>
+<li>[ ] Endpoints documented</li>
+<li>[ ] Request/response examples</li>
+<li>[ ] Error codes listed</li>
+<li>[ ] Authentication described</li>
+</ul>
+
+<p><strong>Operational Docs (2 points):</strong></p>
+<ul>
+<li>[ ] Deployment guide</li>
+<li>[ ] Monitoring/logging info</li>
+<li>[ ] Backup/recovery procedures</li>
+</ul>
+
+<hr>
+
+<h2 id="📊-final-scoring">📊 Final Scoring</h2>
+
+<h3 id="score-aggregation">Score Aggregation</h3>
+
+<table>
+<thead><tr>
+<th>Dimension</th>
+<th>Weight</th>
+<th>Max Points</th>
+<th>Score</th>
+<th>Weighted</th>
+</tr></thead><tbody>
+<tr>
+<td>Functional Correctness</td>
+<td>25%</td>
+<td>25</td>
+<td>[X]</td>
+<td>[X]</td>
+</tr>
+<tr>
+<td>Code Quality</td>
+<td>25%</td>
+<td>25</td>
+<td>[X]</td>
+<td>[X]</td>
+</tr>
+<tr>
+<td>AI Utilization</td>
+<td>20%</td>
+<td>20</td>
+<td>[X]</td>
+<td>[X]</td>
+</tr>
+<tr>
+<td>Testing & Reliability</td>
+<td>15%</td>
+<td>15</td>
+<td>[X]</td>
+<td>[X]</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>15%</td>
+<td>15</td>
+<td>[X]</td>
+<td>[X]</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>100%</strong></td>
+<td><strong>100</strong></td>
+<td><strong>[X]</strong></td>
+<td><strong>[X]</strong></td>
+</tr>
+</tbody></table>
+
+<h3 id="grade-assignment">Grade Assignment</h3>
+
+<table>
+<thead><tr>
+<th>Score Range</th>
+<th>Grade</th>
+<th>Assessment</th>
+</tr></thead><tbody>
+<tr>
+<td>90-100</td>
+<td>A+</td>
+<td>Exceptional - Industry-leading quality</td>
+</tr>
+<tr>
+<td>85-89</td>
+<td>A</td>
+<td>Excellent - Production-ready, best practices</td>
+</tr>
+<tr>
+<td>80-84</td>
+<td>A-</td>
+<td>Very Good - Minor improvements needed</td>
+</tr>
+<tr>
+<td>75-79</td>
+<td>B+</td>
+<td>Good - Some gaps but solid overall</td>
+</tr>
+<tr>
+<td>70-74</td>
+<td>B</td>
+<td>Satisfactory - Meets requirements</td>
+</tr>
+<tr>
+<td>65-69</td>
+<td>B-</td>
+<td>Adequate - Below expectations in areas</td>
+</tr>
+<tr>
+<td>60-64</td>
+<td>C</td>
+<td>Needs Improvement - Significant gaps</td>
+</tr>
+<tr>
+<td><60</td>
+<td>D/F</td>
+<td>Unsatisfactory - Major issues</td>
+</tr>
+</tbody></table>
+
+<hr>
+
+<h2 id="📝-feedback-template">📝 Feedback Template</h2>
+
+<p><strong>Use this template for feedback:</strong></p>
+
+<pre><code>
+# Evaluation Feedback: [Challenge Name]
+
+**Participant:** [Name]
+**Evaluator:** [Your Name]
+**Date:** YYYY-MM-DD
+**Final Score:** [X]/100 ([Grade])
+
+---
+
+## Summary
+
+[2-3 paragraph summary of overall submission quality]
+
+**Strengths:**
+- [Strength 1]
+- [Strength 2]
+- [Strength 3]
+
+**Areas for Improvement:**
+- [Improvement area 1]
+- [Improvement area 2]
+- [Improvement area 3]
+
+---
+
+## Detailed Scores
+
+### 1. Functional Correctness: [X]/25
+
+**What worked well:**
+- [Specific examples]
+
+**What needs work:**
+- [Specific examples]
+
+**Suggestions:**
+- [Actionable improvements]
+
+### 2. Code Quality: [X]/25
+
+**What worked well:**
+- [Specific examples]
+
+**What needs work:**
+- [Specific examples]
+
+**Suggestions:**
+- [Actionable improvements]
+
+### 3. AI Utilization: [X]/20
+
+**What worked well:**
+- [Specific examples of effective AI usage]
+
+**What needs work:**
+- [Missed opportunities for AI assistance]
+
+**Suggestions:**
+- [How to improve AI tool usage]
+
+### 4. Testing &amp; Reliability: [X]/15
+
+**What worked well:**
+- [Test strengths]
+
+**What needs work:**
+- [Testing gaps]
+
+**Suggestions:**
+- [Testing improvements]
+
+### 5. Documentation: [X]/15
+
+**What worked well:**
+- [Documentation strengths]
+
+**What needs work:**
+- [Documentation gaps]
+
+**Suggestions:**
+- [Documentation improvements]
+
+---
+
+## Key Learnings
+
+**What this submission teaches us:**
+- [Insight 1]
+- [Insight 2]
+- [Insight 3]
+
+---
+
+## Recommended Next Steps
+
+For this participant:
+1. [Action item 1]
+2. [Action item 2]
+3. [Action item 3]
+
+---
+
+**Evaluator Signature:** [Name]
+**Date:** YYYY-MM-DD
+</code></pre>
+
+<hr>
+
+<h2 id="🎓-calibration-guidelines">🎓 Calibration Guidelines</h2>
+
+<h3 id="avoiding-evaluator-bias">Avoiding Evaluator Bias</h3>
+
+<p><strong>Common Biases to Watch For:</strong></p>
+
+<ol>
+<li><strong>Halo Effect:</strong> Don't let one excellent aspect inflate other scores</li>
+<li><strong>Horn Effect:</strong> Don't let one poor aspect deflate other scores</li>
+<li><strong>Recency Bias:</strong> Don't compare to most recent submission only</li>
+<li><strong>Anchoring:</strong> Don't anchor too heavily on first few submissions</li>
+<li><strong>Leniency/Severity:</strong> Maintain consistent standards across all submissions</li>
+</ol>
+
+<h3 id="calibration-exercises">Calibration Exercises</h3>
+
+<p><strong>Before evaluating submissions:</strong></p>
+
+<ol>
+<li><strong>Review rubrics thoroughly</strong></li>
+<li><strong>Score 3 sample submissions</strong> with other evaluators</li>
+<li><strong>Compare scores</strong> and discuss discrepancies</li>
+<li><strong>Align on standards</strong> for each score level</li>
+<li><strong>Document edge cases</strong> and how to score them</li>
+</ol>
+
+<h3 id="consistency-checks">Consistency Checks</h3>
+
+<p><strong>Periodically:</strong></p>
+<ul>
+<li>Compare your scores to other evaluators</li>
+<li>Re-score a previous submission to check consistency</li>
+<li>Discuss outlier scores with other evaluators</li>
+<li>Update rubrics based on learnings</li>
+</ul>
+
+<hr>
+
+<h2 id="🔍-edge-cases-&-faqs">🔍 Edge Cases & FAQs</h2>
+
+<h3 id="q-what-if-they-used-a-different-tech-stack-than-suggested?">Q: What if they used a different tech stack than suggested?</h3>
+
+<p><strong>A:</strong> Acceptable if they justify it and meet all requirements. Don't penalize for technology choices unless they clearly hinder quality.</p>
+
+<h3 id="q-what-if-they-only-partially-completed-the-challenge?">Q: What if they only partially completed the challenge?</h3>
+
+<p><strong>A:</strong> Score based on what was completed. Partial credit for partial work, but functional correctness score will be lower.</p>
+
+<h3 id="q-what-if-tests-are-failing?">Q: What if tests are failing?</h3>
+
+<p><strong>A:</strong> Significant penalty. Functional correctness and testing scores both affected. Must document why tests fail.</p>
+
+<h3 id="q-what-if-they-clearly-didn't-use-ai-much?">Q: What if they clearly didn't use AI much?</h3>
+
+<p><strong>A:</strong> Lower AI utilization score, but doesn't affect other dimensions if quality is high. They may have experience in the domain.</p>
+
+<h3 id="q-what-if-ai-generated-code-has-issues-they-didn't-catch?">Q: What if AI-generated code has issues they didn't catch?</h3>
+
+<p><strong>A:</strong> Reflects poorly on both code quality and AI utilization (lack of validation). Score both dimensions accordingly.</p>
+
+<h3 id="q-what-if-documentation-is-excellent-but-code-is-poor?">Q: What if documentation is excellent but code is poor?</h3>
+
+<p><strong>A:</strong> Score each dimension independently. Good docs don't compensate for poor code and vice versa.</p>
+
+<h3 id="q-what-about-bonus-features?">Q: What about bonus features?</h3>
+
+<p><strong>A:</strong> Award bonus points as specified in challenge (typically 5-15 extra points). Note them clearly in feedback.</p>
+
+<hr>
+
+<h2 id="📈-data-collection">📈 Data Collection</h2>
+
+<p><strong>For research purposes, collect:</strong></p>
+
+<ul>
+<li>[ ] Final scores by dimension</li>
+<li>[ ] Overall completion time</li>
+<li>[ ] AI tools used</li>
+<li>[ ] Common mistakes</li>
+<li>[ ] Effective patterns observed</li>
+<li>[ ] Areas where most struggle</li>
+</ul>
+
+<p><strong>Aggregate data helps:</strong></p>
+<ul>
+<li>Improve challenge design</li>
+<li>Refine rubrics</li>
+<li>Identify learning gaps</li>
+<li>Inform best practices</li>
+</ul>
+
+<hr>
+
+<h2 id="🔄-continuous-improvement">🔄 Continuous Improvement</h2>
+
+<h3 id="after-each-evaluation-batch">After Each Evaluation Batch</h3>
+
+<p><strong>Review and update:</strong></p>
+<ol>
+<li>Are rubrics clear and comprehensive?</li>
+<li>Are score distributions reasonable?</li>
+<li>Are we measuring what matters?</li>
+<li>What patterns emerge across submissions?</li>
+<li>How can we improve challenges?</li>
+</ol>
+
+<h3 id="quarterly-reviews">Quarterly Reviews</h3>
+
+<p><strong>Conduct deeper analysis:</strong></p>
+<ul>
+<li>Inter-rater reliability</li>
+<li>Score distribution analysis</li>
+<li>Correlation between scores and experience</li>
+<li>AI effectiveness patterns</li>
+<li>Challenge difficulty calibration</li>
+</ul>
+
+<hr>
+
+<p><strong>Guide Version:</strong> 1.0</p>
+<p><strong>Created:</strong> 2025-11-19</p>
+<p><strong>Next Review:</strong> After first 50 evaluations</p>
+
+<hr>
+
+<p><em>Fair, consistent, constructive evaluation drives learning and improvement.</em></p>
+
+        </div>
+
+        <div class="footer">
+            <p><a href="../index.html">← Back to Documentation Hub</a></p>
+            <p>AI-Augmented Coding Challenge Framework | Version: 1.0</p>
+        </div>
+    </div>
+</body>
+</html>

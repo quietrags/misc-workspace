@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge 3: Security & Performance - AI Coding Challenges</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-brand">
+                🚀 AI Coding Challenges
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../quick-start.html">Quick Start</a></li>
+                <li><a href="../ai-modes-guide.html">AI Modes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>→</span> <a href="../challenges/">Challenges</a> <span>→</span> Challenge 3
+        </div>
+
+        <div class="content-wrapper">
+            <h1 id="challenge-3-security-hardening-&-performance-optimization">Challenge 3: Security Hardening & Performance Optimization</h1>
+
+<p><strong>"From MVP to Production-Ready in 24 Hours"</strong></p>
+
+<hr>
+
+<h2 id="🎯-challenge-overview">🎯 Challenge Overview</h2>
+
+<p><strong>Difficulty:</strong> High</p>
+<p><strong>Estimated Time:</strong> 6-8 hours</p>
+<p><strong>Recommended AI Modes:</strong> Agentic (50%) + Chat (35%) + Workspace (15%)</p>
+<p><strong>Tech Stack:</strong> Node.js/Express, React, PostgreSQL, Redis, Docker</p>
+
+<hr>
+
+<h2 id="📖-scenario">📖 Scenario</h2>
+
+<p>A startup's viral social media app just got featured on TechCrunch. Traffic went from 100 → 10,000 concurrent users overnight. But there are critical problems:</p>
+
+<p><strong>Security Issues:</strong></p>
+<ul>
+<li>🔴 SQL injection vulnerabilities</li>
+<li>🔴 No authentication system</li>
+<li>🔴 Exposed API keys in frontend code</li>
+<li>🔴 Missing CSRF protection</li>
+<li>🔴 No rate limiting (DDoS risk)</li>
+<li>🔴 Weak password policies</li>
+<li>🔴 No security headers</li>
+</ul>
+
+<p><strong>Performance Issues:</strong></p>
+<ul>
+<li>🔴 5+ second page load times</li>
+<li>🔴 N+1 database queries everywhere</li>
+<li>🔴 No caching</li>
+<li>🔴 Unoptimized images (5MB each)</li>
+<li>🔴 Memory leaks in production</li>
+<li>🔴 Synchronous blocking operations</li>
+</ul>
+
+<p><strong>Operations Issues:</strong></p>
+<ul>
+<li>🔴 No monitoring/logging</li>
+<li>🔴 No error tracking</li>
+<li>🔴 Hardcoded configuration</li>
+<li>🔴 No CI/CD pipeline</li>
+</ul>
+
+<p>Your mission: <strong>Make this application production-ready within 8 hours.</strong></p>
+
+<hr>
+
+<h2 id="🗂️-the-vulnerable-application">🗂️ The Vulnerable Application</h2>
+
+<h3 id="current-architecture">Current Architecture</h3>
+
+<pre><code>
+social-app/
+├── frontend/                  # React app
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Feed.jsx       # No authentication check
+│   │   │   ├── Profile.jsx    # XSS vulnerable
+│   │   │   └── Upload.jsx     # No file validation
+│   │   ├── api/
+│   │   │   └── client.js      # API keys hardcoded
+│   │   └── App.jsx
+│   └── public/
+│       └── images/            # Unoptimized 5MB images
+├── backend/                   # Node.js/Express
+│   ├── server.js              # No security middleware
+│   ├── routes/
+│   │   ├── auth.js            # Weak password validation
+│   │   ├── posts.js           # SQL injection vulnerable
+│   │   └── users.js           # No authorization checks
+│   ├── models/
+│   │   └── db.js              # Raw SQL queries
+│   └── config.js              # Secrets in plaintext
+└── database/
+    └── schema.sql             # No indexes
+</code></pre>
+
+<h3 id="security-vulnerabilities-owasp-top-10">Security Vulnerabilities (OWASP Top 10)</h3>
+
+<h4 id="1.-sql-injection-critical">1. SQL Injection (Critical)</h4>
+<pre><code>
+// backend/routes/posts.js - VULNERABLE
+app.get(&#39;/api/posts/search&#39;, (req, res) =&gt; {
+    const { query } = req.query;
+
+    // SQL injection vulnerable
+    db.query(
+        `SELECT * FROM posts WHERE title LIKE &#39;%${query}%&#39;`,
+        (err, results) =&gt; {
+            res.json(results);
+        }
+    );
+});
+</code></pre>
+
+<h4 id="2.-broken-authentication">2. Broken Authentication</h4>
+<pre><code>
+// backend/routes/auth.js - VULNERABLE
+app.post(&#39;/api/login&#39;, (req, res) =&gt; {
+    const { username, password } = req.body;
+
+    // No password hashing
+    db.query(
+        &#39;SELECT * FROM users WHERE username = ? AND password = ?&#39;,
+        [username, password],
+        (err, users) =&gt; {
+            if (users.length &gt; 0) {
+                // No session management
+                res.json({ success: true, user: users[0] });
+            }
+        }
+    );
+});
+</code></pre>
+
+<h4 id="3.-sensitive-data-exposure">3. Sensitive Data Exposure</h4>
+<pre><code>
+// frontend/src/api/client.js - EXPOSED SECRETS
+const API_KEY = &#39;sk_live_51MxPzH...&#39;; // Hardcoded in frontend
+const AWS_SECRET = &#39;wJalrXUtnFEMI/K7MDENG...&#39;;
+
+export const uploadImage = (file) =&gt; {
+    return fetch(`https://api.service.com/upload`, {
+        headers: { &#39;X-API-Key&#39;: API_KEY }
+    });
+};
+</code></pre>
+
+<h4 id="4.-xss-vulnerabilities">4. XSS Vulnerabilities</h4>
+<pre><code>
+// frontend/src/components/Profile.jsx - XSS VULNERABLE
+function ProfileBio({ bio }) {
+    // Directly rendering user input
+    return &lt;div dangerouslySetInnerHTML={{ __html: bio }} /&gt;;
+}
+</code></pre>
+
+<h4 id="5.-insecure-deserialization">5. Insecure Deserialization</h4>
+<pre><code>
+// backend/routes/users.js - UNSAFE
+app.post(&#39;/api/preferences&#39;, (req, res) =&gt; {
+    const prefs = eval(req.body.preferences); // NEVER DO THIS
+    // ...
+});
+</code></pre>
+
+<h3 id="performance-issues">Performance Issues</h3>
+
+<h4 id="1.-n+1-queries">1. N+1 Queries</h4>
+<pre><code>
+// backend/routes/posts.js
+app.get(&#39;/api/feed&#39;, async (req, res) =&gt; {
+    const posts = await db.query(&#39;SELECT * FROM posts LIMIT 50&#39;);
+
+    // N+1 problem: 50 additional queries
+    for (let post of posts) {
+        post.author = await db.query(&#39;SELECT * FROM users WHERE id = ?&#39;, [post.user_id]);
+        post.likes = await db.query(&#39;SELECT COUNT(*) FROM likes WHERE post_id = ?&#39;, [post.id]);
+        post.comments = await db.query(&#39;SELECT * FROM comments WHERE post_id = ?&#39;, [post.id]);
+    }
+
+    res.json(posts);
+});
+</code></pre>
+
+<h4 id="2.-memory-leaks">2. Memory Leaks</h4>
+<pre><code>
+// backend/server.js
+const cache = {}; // Unbounded cache - memory leak
+
+app.get(&#39;/api/data/:id&#39;, (req, res) =&gt; {
+    // Cache grows forever
+    cache[req.params.id] = fetchLargeData(req.params.id);
+    res.json(cache[req.params.id]);
+});
+</code></pre>
+
+<h4 id="3.-unoptimized-assets">3. Unoptimized Assets</h4>
+<pre><code>
+frontend/public/images/
+├── hero.jpg      (5.2 MB - not compressed)
+├── avatar1.png   (2.8 MB - could be 50KB)
+├── banner.jpg    (4.1 MB - no lazy loading)
+</code></pre>
+
+<h4 id="4.-no-caching">4. No Caching</h4>
+<ul>
+<li>No browser caching headers</li>
+<li>No CDN</li>
+<li>No Redis caching for API responses</li>
+<li>Database queries repeated on every request</li>
+</ul>
+
+<hr>
+
+<h2 id="🎯-your-mission">🎯 Your Mission</h2>
+
+<h3 id="part-1-security-hardening-40-points">Part 1: Security Hardening (40 points)</h3>
+
+<h4 id="1.1-fix-all-critical-vulnerabilities-25-points">1.1 Fix All Critical Vulnerabilities (25 points)</h4>
+
+<p><strong>Required Fixes:</strong></p>
+
+<p>✅ <strong>SQL Injection:</strong></p>
+<ul>
+<li>Replace raw queries with parameterized queries</li>
+<li>Use an ORM (Sequelize, TypeORM, Prisma)</li>
+<li>Add input validation (Joi, Yup)</li>
+</ul>
+
+<p>✅ <strong>Authentication & Authorization:</strong></p>
+<ul>
+<li>Implement JWT-based authentication</li>
+<li>Add bcrypt password hashing</li>
+<li>Implement role-based access control (RBAC)</li>
+<li>Add refresh token mechanism</li>
+</ul>
+
+<p>✅ <strong>XSS Protection:</strong></p>
+<ul>
+<li>Sanitize all user inputs (DOMPurify)</li>
+<li>Use Content Security Policy headers</li>
+<li>Escape HTML in templates</li>
+</ul>
+
+<p>✅ <strong>CSRF Protection:</strong></p>
+<ul>
+<li>Add CSRF tokens</li>
+<li>Use SameSite cookie flags</li>
+<li>Implement double-submit cookies</li>
+</ul>
+
+<p>✅ <strong>Sensitive Data:</strong></p>
+<ul>
+<li>Move secrets to environment variables</li>
+<li>Use .env files (never committed)</li>
+<li>Implement secret management (HashiCorp Vault or AWS Secrets Manager)</li>
+</ul>
+
+<h4 id="1.2-security-best-practices-15-points">1.2 Security Best Practices (15 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Security Headers:</strong></p>
+<pre><code>
+helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: [&quot;&#39;self&#39;&quot;],
+            styleSrc: [&quot;&#39;self&#39;&quot;, &quot;&#39;unsafe-inline&#39;&quot;],
+            scriptSrc: [&quot;&#39;self&#39;&quot;],
+            imgSrc: [&quot;&#39;self&#39;&quot;, &quot;data:&quot;, &quot;https:&quot;],
+        },
+    },
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+    },
+})
+</code></pre>
+
+<p>✅ <strong>Rate Limiting:</strong></p>
+<pre><code>
+rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: &quot;Too many requests&quot;,
+})
+</code></pre>
+
+<p>✅ <strong>Input Validation:</strong></p>
+<pre><code>
+const schema = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    password: Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
+    email: Joi.string().email(),
+});
+</code></pre>
+
+<p>✅ <strong>File Upload Security:</strong></p>
+<ul>
+<li>Validate file types and sizes</li>
+<li>Scan for malware</li>
+<li>Store outside web root</li>
+<li>Generate unique filenames</li>
+</ul>
+
+<h3 id="part-2-performance-optimization-30-points">Part 2: Performance Optimization (30 points)</h3>
+
+<h4 id="2.1-database-optimization-15-points">2.1 Database Optimization (15 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Fix N+1 Queries:</strong></p>
+<pre><code>
+// Use JOIN instead of multiple queries
+const posts = await db.query(`
+    SELECT
+        p.*,
+        u.username,
+        u.avatar,
+        COUNT(DISTINCT l.id) as like_count,
+        COUNT(DISTINCT c.id) as comment_count
+    FROM posts p
+    JOIN users u ON p.user_id = u.id
+    LEFT JOIN likes l ON p.id = l.post_id
+    LEFT JOIN comments c ON p.id = c.post_id
+    GROUP BY p.id
+    LIMIT 50
+`);
+</code></pre>
+
+<p>✅ <strong>Add Indexes:</strong></p>
+<pre><code>
+CREATE INDEX idx_posts_user_id ON posts(user_id);
+CREATE INDEX idx_posts_created_at ON posts(created_at DESC);
+CREATE INDEX idx_likes_post_id ON likes(post_id);
+CREATE INDEX idx_comments_post_id ON comments(post_id);
+</code></pre>
+
+<p>✅ <strong>Implement Caching:</strong></p>
+<pre><code>
+// Redis caching
+const cachedPosts = await redis.get(&#39;feed:home&#39;);
+if (cachedPosts) {
+    return JSON.parse(cachedPosts);
+}
+
+const posts = await fetchPosts();
+await redis.setex(&#39;feed:home&#39;, 300, JSON.stringify(posts)); // 5min TTL
+</code></pre>
+
+<p>✅ <strong>Connection Pooling:</strong></p>
+<pre><code>
+const pool = new Pool({
+    max: 20, // maximum pool size
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+});
+</code></pre>
+
+<h4 id="2.2-frontend-optimization-15-points">2.2 Frontend Optimization (15 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Image Optimization:</strong></p>
+<ul>
+<li>Compress images (imagemin, sharp)</li>
+<li>Convert to WebP format</li>
+<li>Implement lazy loading</li>
+<li>Use responsive images (srcset)</li>
+<li>Add CDN for static assets</li>
+</ul>
+
+<p>✅ <strong>Code Splitting:</strong></p>
+<pre><code>
+// React lazy loading
+const Feed = lazy(() =&gt; import(&#39;./components/Feed&#39;));
+const Profile = lazy(() =&gt; import(&#39;./components/Profile&#39;));
+
+&lt;Suspense fallback={&lt;Loading /&gt;}&gt;
+    &lt;Route path=&quot;/feed&quot; component={Feed} /&gt;
+&lt;/Suspense&gt;
+</code></pre>
+
+<p>✅ <strong>Bundle Optimization:</strong></p>
+<ul>
+<li>Tree shaking</li>
+<li>Minification</li>
+<li>Compression (Brotli/Gzip)</li>
+<li>Remove unused dependencies</li>
+</ul>
+
+<p>✅ <strong>Browser Caching:</strong></p>
+<pre><code>
+// Set cache headers
+res.setHeader(&#39;Cache-Control&#39;, &#39;public, max-age=31536000, immutable&#39;);
+</code></pre>
+
+<h3 id="part-3-testing-&-security-scanning-15-points">Part 3: Testing & Security Scanning (15 points)</h3>
+
+<h4 id="3.1-security-testing-10-points">3.1 Security Testing (10 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>SAST (Static Analysis):</strong></p>
+<pre><code>
+# ESLint security plugin
+npm install --save-dev eslint-plugin-security
+
+# Run security audit
+npm audit
+npm audit fix
+
+# Dependency scanning
+npx snyk test
+</code></pre>
+
+<p>✅ <strong>DAST (Dynamic Analysis):</strong></p>
+<pre><code>
+# OWASP ZAP scanning
+docker run -t owasp/zap2docker-stable zap-baseline.py \
+    -t http://localhost:3000
+</code></pre>
+
+<p>✅ <strong>Penetration Testing:</strong></p>
+<ul>
+<li>Test SQL injection endpoints</li>
+<li>Test authentication bypass attempts</li>
+<li>Test XSS vectors</li>
+<li>Test CSRF protection</li>
+</ul>
+
+<h4 id="3.2-performance-testing-5-points">3.2 Performance Testing (5 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Load Testing:</strong></p>
+<pre><code>
+// k6 load test
+import http from &#39;k6/http&#39;;
+import { check } from &#39;k6&#39;;
+
+export let options = {
+    stages: [
+        { duration: &#39;2m&#39;, target: 100 },
+        { duration: &#39;5m&#39;, target: 100 },
+        { duration: &#39;2m&#39;, target: 0 },
+    ],
+    thresholds: {
+        http_req_duration: [&#39;p(99)&lt;1000&#39;], // 99% under 1s
+    },
+};
+
+export default function() {
+    let res = http.get(&#39;http://localhost:3000/api/feed&#39;);
+    check(res, { &#39;status is 200&#39;: (r) =&gt; r.status === 200 });
+}
+</code></pre>
+
+<p>✅ <strong>Lighthouse Audits:</strong></p>
+<ul>
+<li>Performance score >90</li>
+<li>Accessibility score >90</li>
+<li>Best Practices score >90</li>
+<li>SEO score >90</li>
+</ul>
+
+<h3 id="part-4-operations-&-monitoring-15-points">Part 4: Operations & Monitoring (15 points)</h3>
+
+<h4 id="4.1-logging-&-error-tracking-8-points">4.1 Logging & Error Tracking (8 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Structured Logging:</strong></p>
+<pre><code>
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: &#39;error.log&#39;, level: &#39;error&#39; }),
+        new winston.transports.File({ filename: &#39;combined.log&#39; }),
+    ],
+});
+
+logger.info(&#39;User logged in&#39;, {
+    userId: user.id,
+    ip: req.ip,
+    timestamp: new Date(),
+});
+</code></pre>
+
+<p>✅ <strong>Error Tracking:</strong></p>
+<pre><code>
+// Sentry integration
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+});
+
+app.use(Sentry.Handlers.errorHandler());
+</code></pre>
+
+<h4 id="4.2-monitoring-&-alerting-7-points">4.2 Monitoring & Alerting (7 points)</h4>
+
+<p><strong>Required:</strong></p>
+
+<p>✅ <strong>Metrics Collection:</strong></p>
+<pre><code>
+// Prometheus metrics
+const promClient = require(&#39;prom-client&#39;);
+const register = new promClient.Registry();
+
+const httpRequestDuration = new promClient.Histogram({
+    name: &#39;http_request_duration_seconds&#39;,
+    help: &#39;Duration of HTTP requests in seconds&#39;,
+    labelNames: [&#39;method&#39;, &#39;route&#39;, &#39;status_code&#39;],
+});
+
+register.registerMetric(httpRequestDuration);
+</code></pre>
+
+<p>✅ <strong>Health Checks:</strong></p>
+<pre><code>
+app.get(&#39;/health&#39;, async (req, res) =&gt; {
+    const health = {
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+        database: await checkDatabase(),
+        redis: await checkRedis(),
+    };
+
+    const status = health.database &amp;&amp; health.redis ? 200 : 503;
+    res.status(status).json(health);
+});
+</code></pre>
+
+<p>✅ <strong>Dashboards:</strong></p>
+<ul>
+<li>Grafana dashboard for metrics</li>
+<li>Real-time error tracking</li>
+<li>Performance monitoring</li>
+</ul>
+
+<hr>
+
+<h2 id="📊-evaluation-rubric">📊 Evaluation Rubric</h2>
+
+<h3 id="1.-functional-correctness-25-points">1. Functional Correctness (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>All vulnerabilities fixed</li>
+<li>Application fully functional</li>
+<li>Authentication/authorization working</li>
+<li>Performance targets met (<1s page load)</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Most vulnerabilities fixed</li>
+<li>Minor issues remain</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Some vulnerabilities fixed</li>
+<li>Significant gaps</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Major vulnerabilities remain</li>
+</ul>
+
+<h3 id="2.-code-quality-25-points">2. Code Quality (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>Clean, maintainable fixes</li>
+<li>Proper error handling</li>
+<li>Security best practices</li>
+<li>No new technical debt</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Good fixes</li>
+<li>Some areas improvable</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Functional but messy</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Poor code quality</li>
+</ul>
+
+<h3 id="3.-ai-utilization-20-points">3. AI Utilization (20 points)</h3>
+
+<p><strong>Excellent (16-20):</strong></p>
+<ul>
+<li>AI-generated security fixes</li>
+<li>Automated vulnerability scanning with AI assistance</li>
+<li>AI-optimized database queries</li>
+<li>Generated comprehensive security tests</li>
+</ul>
+
+<p><strong>Good (12-15):</strong></p>
+<ul>
+<li>Good AI usage for fixes</li>
+</ul>
+
+<p><strong>Adequate (8-11):</strong></p>
+<ul>
+<li>Basic AI assistance</li>
+</ul>
+
+<p><strong>Poor (0-7):</strong></p>
+<ul>
+<li>Minimal AI usage</li>
+</ul>
+
+<h3 id="4.-testing-&-validation-15-points">4. Testing & Validation (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>Security tests passing</li>
+<li>Load tests meeting targets</li>
+<li>Lighthouse score >90</li>
+<li>Penetration tests passing</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>Good test coverage</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Basic tests</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>No tests</li>
+</ul>
+
+<h3 id="5.-documentation-15-points">5. Documentation (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>Security fixes documented</li>
+<li>Performance improvements quantified</li>
+<li>Deployment guide</li>
+<li>Security best practices guide</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>Good documentation</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Minimal docs</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>No docs</li>
+</ul>
+
+<hr>
+
+<h2 id="🚀-getting-started">🚀 Getting Started</h2>
+
+<h3 id="step-1-clone-vulnerable-app">Step 1: Clone Vulnerable App</h3>
+
+<pre><code>
+git clone [vulnerable-app-repo]
+cd challenge-3-security-performance
+docker-compose up -d
+</code></pre>
+
+<h3 id="step-2-security-audit-agentic-mode">Step 2: Security Audit (Agentic Mode)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Analyze this Node.js application for security vulnerabilities:
+1. Scan for SQL injection points
+2. Check authentication implementation
+3. Identify XSS vulnerabilities
+4. Find exposed secrets
+5. List all OWASP Top 10 issues
+
+Provide specific file locations and vulnerable code snippets.&quot;
+</code></pre>
+
+<h3 id="step-3-fix-vulnerabilities-agentic-mode">Step 3: Fix Vulnerabilities (Agentic Mode)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Fix SQL injection vulnerability in backend/routes/posts.js:
+1. Convert to parameterized queries
+2. Add input validation with Joi
+3. Implement prepared statements
+4. Add error handling
+5. Write security tests&quot;
+</code></pre>
+
+<h3 id="step-4-implement-authentication-agentic-+-chat">Step 4: Implement Authentication (Agentic + Chat)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Implement JWT authentication for this Express app:
+1. Add bcrypt password hashing
+2. Create login/register endpoints
+3. Implement JWT token generation
+4. Add authentication middleware
+5. Add refresh token mechanism
+6. Write authentication tests&quot;
+</code></pre>
+
+<h3 id="step-5-performance-optimization-agentic-mode">Step 5: Performance Optimization (Agentic Mode)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Optimize this database query to fix N+1 problem:
+[paste vulnerable code]
+
+Requirements:
+1. Use JOIN instead of multiple queries
+2. Add appropriate indexes
+3. Implement Redis caching
+4. Add query performance logging
+5. Write performance tests&quot;
+</code></pre>
+
+<hr>
+
+<h2 id="💡-ai-mode-strategy">💡 AI Mode Strategy</h2>
+
+<h3 id="agentic-mode-50%">Agentic Mode (50%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Bulk security fixes across files</li>
+<li>✅ Implementing authentication system</li>
+<li>✅ Generating security tests</li>
+<li>✅ Database query optimization</li>
+</ul>
+
+<h3 id="chat-mode-35%">Chat Mode (35%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Quick security questions</li>
+<li>✅ Best practice lookups</li>
+<li>✅ Debugging specific errors</li>
+<li>✅ Configuration syntax</li>
+</ul>
+
+<h3 id="workspace-mode-15%">Workspace Mode (15%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Planning security architecture</li>
+<li>✅ Designing caching strategy</li>
+<li>✅ Monitoring setup planning</li>
+</ul>
+
+<hr>
+
+<h2 id="⏱️-time-allocation">⏱️ Time Allocation</h2>
+
+<table>
+<thead><tr>
+<th>Phase</th>
+<th>Time</th>
+<th>AI Mode</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Security Audit</strong></td>
+<td>0.5h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Fix Vulnerabilities</strong></td>
+<td>2h</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>1.5h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Performance Optimization</strong></td>
+<td>2h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Security Testing</strong></td>
+<td>1h</td>
+<td>Chat + Agentic</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>1h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>0.5h</td>
+<td>Agentic</td>
+</tr>
+</tbody></table>
+
+<p><strong>Total: 8.5 hours</strong></p>
+
+<hr>
+
+<h2 id="🏆-bonus-points-10-extra-points">🏆 Bonus Points (10 extra points)</h2>
+
+<ul>
+<li><strong>WAF Integration (+3):</strong> Add ModSecurity rules</li>
+<li><strong>Zero Trust Architecture (+5):</strong> Service mesh with mTLS</li>
+<li><strong>Automated Security Pipeline (+2):</strong> CI/CD security gates</li>
+<li><strong>Security Headers Grade A+ (+2):</strong> securityheaders.com scan</li>
+</ul>
+
+<hr>
+
+<h2 id="🎓-learning-objectives">🎓 Learning Objectives</h2>
+
+<ol>
+<li><strong>Vulnerability Detection</strong> using AI</li>
+<li><strong>Security Patterns</strong> implementation</li>
+<li><strong>Performance Profiling</strong> and optimization</li>
+<li><strong>Security Testing</strong> automation</li>
+<li><strong>Production Operations</strong> best practices</li>
+</ol>
+
+<hr>
+
+<h2 id="📝-submission-requirements">📝 Submission Requirements</h2>
+
+<ol>
+<li><strong>Code:</strong> Fixed application in GitHub repo</li>
+<li><strong>Security Report:</strong> List of vulnerabilities found and fixed</li>
+<li><strong>Performance Report:</strong> Before/after metrics (load times, Lighthouse scores)</li>
+<li><strong>Documentation:</strong> Security best practices guide</li>
+</ol>
+
+<hr>
+
+<p><strong>Challenge Created:</strong> 2025-11-19</p>
+<p><strong>Difficulty Level:</strong> High</p>
+<p><strong>Recommended Experience:</strong> 2+ years web development</p>
+<p><strong>AI Advantage Score:</strong> 88/100</p>
+
+<hr>
+
+<p><em>Security and performance are not optional. Make it production-ready.</em></p>
+
+        </div>
+
+        <div class="footer">
+            <p><a href="../index.html">← Back to Documentation Hub</a></p>
+            <p>AI-Augmented Coding Challenge Framework | Version: 1.0</p>
+        </div>
+    </div>
+</body>
+</html>

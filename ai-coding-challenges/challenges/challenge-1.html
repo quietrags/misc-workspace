@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge 1: Legacy Modernization - AI Coding Challenges</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-brand">
+                🚀 AI Coding Challenges
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../quick-start.html">Quick Start</a></li>
+                <li><a href="../ai-modes-guide.html">AI Modes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>→</span> <a href="../challenges/">Challenges</a> <span>→</span> Challenge 1
+        </div>
+
+        <div class="content-wrapper">
+            <h1 id="challenge-1-legacy-system-modernization">Challenge 1: Legacy System Modernization</h1>
+
+<p><strong>"From Monolith to Microservices: Untangling a Legacy E-Commerce Platform"</strong></p>
+
+<hr>
+
+<h2 id="🎯-challenge-overview">🎯 Challenge Overview</h2>
+
+<p><strong>Difficulty:</strong> High</p>
+<p><strong>Estimated Time:</strong> 6-8 hours</p>
+<p><strong>Recommended AI Modes:</strong> Agentic (60%) + Workspace (30%) + Chat (10%)</p>
+<p><strong>Tech Stack:</strong> Python/Django, PostgreSQL, Redis, Docker</p>
+
+<hr>
+
+<h2 id="📖-scenario">📖 Scenario</h2>
+
+<p>You've just joined an e-commerce startup that built their MVP 3 years ago. The monolith served them well initially, but now:</p>
+
+<ul>
+<li><strong>Performance Issues:</strong> API response times average 2-3 seconds</li>
+<li><strong>Deployment Pain:</strong> 45-minute deployments, frequent rollbacks</li>
+<li><strong>Team Scaling:</strong> 3 teams stepping on each other's toes</li>
+<li><strong>Technical Debt:</strong> No tests, tight coupling, database bottlenecks</li>
+</ul>
+
+<p>The CTO wants to modernize the system without a full rewrite. Your mission: <strong>Extract key domains into microservices while maintaining backward compatibility.</strong></p>
+
+<hr>
+
+<h2 id="🗂️-the-legacy-codebase">🗂️ The Legacy Codebase</h2>
+
+<h3 id="current-architecture">Current Architecture</h3>
+
+<pre><code>
+ecommerce-monolith/
+├── manage.py
+├── requirements.txt
+├── ecommerce/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── products/              # Product catalog (3K LOC)
+│   ├── models.py          # Product, Category, Inventory
+│   ├── views.py           # Business logic in views
+│   ├── admin.py
+│   └── urls.py
+├── orders/                # Order processing (4K LOC)
+│   ├── models.py          # Order, OrderItem, Payment
+│   ├── views.py           # Checkout logic
+│   ├── tasks.py           # Celery tasks (poorly structured)
+│   └── urls.py
+├── users/                 # User management (3K LOC)
+│   ├── models.py          # User, Address, Preferences
+│   ├── views.py           # Auth + profile logic
+│   ├── auth.py            # Custom auth backend
+│   └── urls.py
+├── reviews/               # Product reviews (2K LOC)
+│   ├── models.py
+│   ├── views.py
+│   └── urls.py
+├── recommendations/       # ML recommendations (3K LOC)
+│   ├── engine.py          # Recommendation algorithm
+│   ├── views.py
+│   └── urls.py
+└── shared/
+    ├── utils.py           # 500+ line God object
+    ├── middleware.py
+    └── decorators.py
+</code></pre>
+
+<h3 id="key-problems">Key Problems</h3>
+
+<p><strong>1. Tight Coupling</strong></p>
+<pre><code>
+# orders/views.py - Everything coupled
+def checkout(request):
+    user = User.objects.get(id=request.user.id)
+    cart = Cart.objects.get(user=user)
+
+    # Direct DB queries across domains
+    products = Product.objects.filter(id__in=cart.items)
+    inventory = Inventory.objects.filter(product__in=products)
+
+    # Business logic in views
+    if inventory.quantity &lt; cart.quantity:
+        return JsonResponse({&#39;error&#39;: &#39;Out of stock&#39;})
+
+    # Payment processing inline
+    payment = stripe.charge(...)
+
+    # Order creation with complex logic
+    order = Order.create_with_items(...)
+
+    # Email sending
+    send_order_confirmation(user.email, order)
+
+    # Update inventory directly
+    inventory.quantity -= cart.quantity
+    inventory.save()
+</code></pre>
+
+<p><strong>2. N+1 Query Problems</strong></p>
+<pre><code>
+# products/views.py
+def product_list(request):
+    products = Product.objects.all()  # Query 1
+
+    data = []
+    for product in products:
+        data.append({
+            &#39;name&#39;: product.name,
+            &#39;category&#39;: product.category.name,  # N queries
+            &#39;inventory&#39;: product.inventory.quantity,  # N queries
+            &#39;avg_rating&#39;: product.reviews.aggregate(Avg(&#39;rating&#39;))  # N queries
+        })
+</code></pre>
+
+<p><strong>3. No Tests</strong></p>
+<ul>
+<li>Zero unit tests</li>
+<li>No integration tests</li>
+<li>Manual QA only</li>
+<li>Frequent production bugs</li>
+</ul>
+
+<p><strong>4. Shared Database</strong></p>
+<ul>
+<li>All domains share single PostgreSQL instance</li>
+<li>Foreign keys everywhere</li>
+<li>No clear boundaries</li>
+</ul>
+
+<p><strong>5. No API Documentation</strong></p>
+<ul>
+<li>Endpoints undocumented</li>
+<li>Inconsistent response formats</li>
+<li>No versioning</li>
+</ul>
+
+<hr>
+
+<h2 id="🎯-your-mission">🎯 Your Mission</h2>
+
+<h3 id="required-deliverables">Required Deliverables</h3>
+
+<h4 id="1.-extract-three-microservices-50-points">1. Extract Three Microservices (50 points)</h4>
+
+<p><strong>Service 1: Product Catalog Service</strong></p>
+<ul>
+<li>Extract <code>products/</code> and <code>reviews/</code> apps</li>
+<li>Expose RESTful API for product operations</li>
+<li>Implement caching layer (Redis)</li>
+<li>Add search functionality (Elasticsearch optional)</li>
+</ul>
+
+<p><strong>Service 2: Order Processing Service</strong></p>
+<ul>
+<li>Extract <code>orders/</code> app</li>
+<li>Implement saga pattern for distributed transactions</li>
+<li>Add payment gateway integration</li>
+<li>Implement event-driven order status updates</li>
+</ul>
+
+<p><strong>Service 3: User Service</strong></p>
+<ul>
+<li>Extract <code>users/</code> app</li>
+<li>Implement JWT-based authentication</li>
+<li>Create user profile management API</li>
+<li>Add OAuth2 support (Google/GitHub)</li>
+</ul>
+
+<h4 id="2.-api-gateway-15-points">2. API Gateway (15 points)</h4>
+
+<ul>
+<li>Implement using Kong, Nginx, or AWS API Gateway</li>
+<li>Add rate limiting (100 req/min per user)</li>
+<li>Implement request/response logging</li>
+<li>Add authentication middleware</li>
+</ul>
+
+<h4 id="3.-comprehensive-testing-15-points">3. Comprehensive Testing (15 points)</h4>
+
+<p><strong>Target:</strong> 80%+ test coverage</p>
+
+<ul>
+<li>Unit tests for business logic</li>
+<li>Integration tests for APIs</li>
+<li>Contract tests between services</li>
+<li>Load tests (100 req/s target)</li>
+</ul>
+
+<h4 id="4.-api-documentation-10-points">4. API Documentation (10 points)</h4>
+
+<ul>
+<li>OpenAPI 3.0 specifications for all services</li>
+<li>Swagger UI for interactive docs</li>
+<li>Example requests/responses</li>
+<li>Error code documentation</li>
+</ul>
+
+<h4 id="5.-migration-strategy-10-points">5. Migration Strategy (10 points)</h4>
+
+<ul>
+<li>Strangler fig pattern implementation</li>
+<li>Backward compatibility layer</li>
+<li>Database migration scripts</li>
+<li>Rollback procedures</li>
+</ul>
+
+<hr>
+
+<h2 id="🔧-technical-requirements">🔧 Technical Requirements</h2>
+
+<h3 id="service-communication">Service Communication</h3>
+
+<p><strong>Option 1: REST APIs</strong></p>
+<ul>
+<li>Use Django REST Framework or FastAPI</li>
+<li>Implement circuit breakers (resilience4py)</li>
+<li>Add retry logic with exponential backoff</li>
+</ul>
+
+<p><strong>Option 2: Event-Driven (Bonus)</strong></p>
+<ul>
+<li>Use RabbitMQ or Kafka</li>
+<li>Implement event sourcing for orders</li>
+<li>Add CQRS pattern</li>
+</ul>
+
+<h3 id="data-management">Data Management</h3>
+
+<p><strong>Phase 1: Shared Database (Week 1)</strong></p>
+<ul>
+<li>Services share DB initially</li>
+<li>Use database views for isolation</li>
+</ul>
+
+<p><strong>Phase 2: Database Per Service (Week 2)</strong></p>
+<ul>
+<li>Extract data into separate databases</li>
+<li>Implement data replication where needed</li>
+<li>Handle eventual consistency</li>
+</ul>
+
+<h3 id="observability">Observability</h3>
+
+<ul>
+<li><strong>Logging:</strong> Structured JSON logs (ELK stack compatible)</li>
+<li><strong>Metrics:</strong> Prometheus metrics endpoints</li>
+<li><strong>Tracing:</strong> OpenTelemetry for distributed tracing</li>
+<li><strong>Health Checks:</strong> <code>/health</code> and <code>/ready</code> endpoints</li>
+</ul>
+
+<h3 id="containerization">Containerization</h3>
+
+<ul>
+<li>Dockerfile for each service</li>
+<li>Docker Compose for local development</li>
+<li>Kubernetes manifests (optional bonus)</li>
+</ul>
+
+<hr>
+
+<h2 id="📊-evaluation-rubric">📊 Evaluation Rubric</h2>
+
+<h3 id="1.-functional-correctness-25-points">1. Functional Correctness (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>All three services working independently</li>
+<li>API gateway routing correctly</li>
+<li>Backward compatibility maintained</li>
+<li>No data loss during migration</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Services mostly working</li>
+<li>Minor edge cases missed</li>
+<li>Some backward compatibility issues</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Basic functionality works</li>
+<li>Significant gaps in implementation</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Major functionality broken</li>
+</ul>
+
+<h3 id="2.-code-quality-25-points">2. Code Quality (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>Clear service boundaries (low coupling, high cohesion)</li>
+<li>SOLID principles applied</li>
+<li>Clean architecture (domain/application/infrastructure layers)</li>
+<li>No code duplication</li>
+<li>Consistent coding style</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Decent boundaries</li>
+<li>Some code smells</li>
+<li>Minor duplication</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Services separated but still coupled</li>
+<li>Significant code smells</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Poor separation</li>
+<li>High coupling</li>
+</ul>
+
+<h3 id="3.-ai-utilization-20-points">3. AI Utilization (20 points)</h3>
+
+<p><strong>Excellent (16-20):</strong></p>
+<ul>
+<li>Used AI Workspace for architecture planning</li>
+<li>Used Agentic mode for multi-file refactoring</li>
+<li>Generated comprehensive tests with AI</li>
+<li>Created API docs with AI assistance</li>
+<li>Custom prompts for domain-specific patterns</li>
+</ul>
+
+<p><strong>Good (12-15):</strong></p>
+<ul>
+<li>Good use of AI for scaffolding</li>
+<li>Some test generation</li>
+<li>Basic documentation assistance</li>
+</ul>
+
+<p><strong>Adequate (8-11):</strong></p>
+<ul>
+<li>Basic AI usage</li>
+<li>Mostly manual work</li>
+</ul>
+
+<p><strong>Poor (0-7):</strong></p>
+<ul>
+<li>Minimal AI usage</li>
+</ul>
+
+<h3 id="4.-testing-&-reliability-15-points">4. Testing & Reliability (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>>80% test coverage</li>
+<li>Unit + integration + contract tests</li>
+<li>Load testing implemented</li>
+<li>Circuit breakers and retries</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>>60% coverage</li>
+<li>Good unit tests</li>
+<li>Some integration tests</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Basic tests present</li>
+<li><60% coverage</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>Minimal tests</li>
+</ul>
+
+<h3 id="5.-documentation-15-points">5. Documentation (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>OpenAPI specs for all services</li>
+<li>Architecture decision records (ADRs)</li>
+<li>Migration runbook</li>
+<li>Deployment guide</li>
+<li>Swagger UI setup</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>Good API documentation</li>
+<li>Basic deployment docs</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Minimal documentation</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>No documentation</li>
+</ul>
+
+<hr>
+
+<h2 id="🚀-getting-started">🚀 Getting Started</h2>
+
+<h3 id="step-1-clone-starter-code">Step 1: Clone Starter Code</h3>
+
+<pre><code>
+git clone [starter-repo-url]
+cd challenge-1-legacy-modernization
+</code></pre>
+
+<h3 id="step-2-run-legacy-monolith">Step 2: Run Legacy Monolith</h3>
+
+<pre><code>
+# Install dependencies
+pip install -r requirements.txt
+
+# Run migrations
+python manage.py migrate
+
+# Load sample data
+python manage.py loaddata sample_data.json
+
+# Start server
+python manage.py runserver
+</code></pre>
+
+<h3 id="step-3-explore-the-codebase-ai-assisted">Step 3: Explore the Codebase (AI-Assisted)</h3>
+
+<p><strong>Prompt Example (Chat Mode):</strong></p>
+<pre><code>
+&quot;Analyze the ecommerce codebase and identify:
+1. Domain boundaries for microservices extraction
+2. Cross-cutting concerns that need shared libraries
+3. Database dependencies between domains
+4. High-coupling areas that need refactoring&quot;
+</code></pre>
+
+<h3 id="step-4-plan-architecture-workspace-mode">Step 4: Plan Architecture (Workspace Mode)</h3>
+
+<p><strong>Prompt Example (Workspace Mode):</strong></p>
+<pre><code>
+&quot;Create a specification for extracting the Product Catalog
+into a microservice:
+- Define API endpoints
+- Specify data models
+- Plan database migration strategy
+- Design caching layer
+- List testing requirements&quot;
+</code></pre>
+
+<h3 id="step-5-execute-refactoring-agentic-mode">Step 5: Execute Refactoring (Agentic Mode)</h3>
+
+<p><strong>Prompt Example (Agentic Mode):</strong></p>
+<pre><code>
+&quot;Extract the products/ app into a standalone FastAPI service:
+1. Create new FastAPI project structure
+2. Move models to new service
+3. Create RESTful endpoints
+4. Add Redis caching
+5. Generate unit tests with &gt;80% coverage
+6. Create OpenAPI documentation&quot;
+</code></pre>
+
+<hr>
+
+<h2 id="💡-ai-mode-strategy-guide">💡 AI Mode Strategy Guide</h2>
+
+<h3 id="when-to-use-chat-mode">When to Use Chat Mode</h3>
+
+<p>✅ <strong>Quick Queries:</strong></p>
+<ul>
+<li>"What's the Django REST Framework syntax for nested serializers?"</li>
+<li>"How do I implement circuit breakers in Python?"</li>
+<li>"Explain the Strangler Fig pattern"</li>
+</ul>
+
+<p>✅ <strong>Debugging:</strong></p>
+<ul>
+<li>"Why is this test failing?" (paste error)</li>
+<li>"How can I optimize this database query?"</li>
+</ul>
+
+<p>❌ <strong>Avoid:</strong></p>
+<ul>
+<li>Large refactoring tasks (use Agentic instead)</li>
+</ul>
+
+<h3 id="when-to-use-agentic-mode">When to Use Agentic Mode</h3>
+
+<p>✅ <strong>Multi-File Refactoring:</strong></p>
+<ul>
+<li>Extract entire app into microservice</li>
+<li>Generate test suites across multiple files</li>
+<li>Update import statements across codebase</li>
+</ul>
+
+<p>✅ <strong>Pattern Application:</strong></p>
+<ul>
+<li>Apply repository pattern to all models</li>
+<li>Add error handling consistently</li>
+<li>Generate API docs for all endpoints</li>
+</ul>
+
+<p>❌ <strong>Avoid:</strong></p>
+<ul>
+<li>High-level planning (use Workspace instead)</li>
+</ul>
+
+<h3 id="when-to-use-workspace-mode">When to Use Workspace Mode</h3>
+
+<p>✅ <strong>Architecture Planning:</strong></p>
+<ul>
+<li>Design service boundaries</li>
+<li>Create specifications</li>
+<li>Plan migration strategies</li>
+</ul>
+
+<p>✅ <strong>Multi-Service Coordination:</strong></p>
+<ul>
+<li>Design API contracts between services</li>
+<li>Plan event schemas</li>
+<li>Design database schemas</li>
+</ul>
+
+<p>❌ <strong>Avoid:</strong></p>
+<ul>
+<li>Implementation details (use Agentic instead)</li>
+</ul>
+
+<hr>
+
+<h2 id="📚-resources">📚 Resources</h2>
+
+<h3 id="microservices-patterns">Microservices Patterns</h3>
+<ul>
+<li>Saga Pattern for distributed transactions</li>
+<li>API Gateway pattern</li>
+<li>Service discovery</li>
+<li>Circuit breaker pattern</li>
+<li>Strangler Fig pattern</li>
+</ul>
+
+<h3 id="python-frameworks">Python Frameworks</h3>
+<ul>
+<li>FastAPI: Modern, fast API framework</li>
+<li>Django REST Framework: Full-featured REST</li>
+<li>Celery: Async task processing</li>
+<li>SQLAlchemy: ORM for microservices</li>
+</ul>
+
+<h3 id="infrastructure">Infrastructure</h3>
+<ul>
+<li>Docker: Containerization</li>
+<li>Nginx: API Gateway</li>
+<li>Redis: Caching</li>
+<li>RabbitMQ: Message broker (optional)</li>
+</ul>
+
+<h3 id="testing-tools">Testing Tools</h3>
+<ul>
+<li>pytest: Test framework</li>
+<li>pytest-cov: Coverage</li>
+<li>locust: Load testing</li>
+<li>pact: Contract testing</li>
+</ul>
+
+<hr>
+
+<h2 id="⏱️-time-allocation-suggestion">⏱️ Time Allocation Suggestion</h2>
+
+<table>
+<thead><tr>
+<th>Phase</th>
+<th>Time</th>
+<th>AI Mode Focus</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Planning</strong></td>
+<td>1 hour</td>
+<td>Workspace</td>
+</tr>
+<tr>
+<td><strong>Service 1: Products</strong></td>
+<td>2 hours</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>Service 2: Orders</strong></td>
+<td>2 hours</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>Service 3: Users</strong></td>
+<td>1.5 hours</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>1 hour</td>
+<td>Chat + Agentic</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>1.5 hours</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>1 hour</td>
+<td>Agentic</td>
+</tr>
+</tbody></table>
+
+<p><strong>Total: 10 hours</strong> (includes buffer)</p>
+
+<hr>
+
+<h2 id="🎓-learning-objectives">🎓 Learning Objectives</h2>
+
+<p>By completing this challenge, you'll learn to:</p>
+
+<ol>
+<li><strong>Identify service boundaries</strong> in legacy monoliths using AI pattern recognition</li>
+<li><strong>Apply microservices patterns</strong> with AI-assisted implementation</li>
+<li><strong>Maintain backward compatibility</strong> during incremental migration</li>
+<li><strong>Generate comprehensive tests</strong> using AI</li>
+<li><strong>Create API documentation</strong> automatically</li>
+<li><strong>Use different AI modes strategically</strong> for different task types</li>
+</ol>
+
+<hr>
+
+<h2 id="📝-submission-requirements">📝 Submission Requirements</h2>
+
+<h3 id="code-submission">Code Submission</h3>
+
+<ol>
+<li><strong>GitHub Repository:</strong></li>
+<ul>
+<li>Separate folder for each service</li>
+<li>Docker Compose for local setup</li>
+<li>README with setup instructions</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>Documentation:</strong></li>
+<ul>
+<li><code>ARCHITECTURE.md</code>: Service boundaries, design decisions</li>
+<li><code>MIGRATION-GUIDE.md</code>: Step-by-step migration process</li>
+<li><code>API-DOCS.md</code>: Link to Swagger UI or OpenAPI specs</li>
+</ul>
+</ol>
+
+<ol>
+<li><strong>AI Usage Log:</strong></li>
+<ul>
+<li>Document key AI interactions</li>
+<li>Note which modes you used for what tasks</li>
+<li>Share effective prompt patterns</li>
+</ul>
+</ol>
+
+<h3 id="demo-video-optional">Demo Video (Optional)</h3>
+
+<ul>
+<li>5-minute walkthrough</li>
+<li>Show services running independently</li>
+<li>Demonstrate API gateway routing</li>
+<li>Run test suite</li>
+<li>Show API documentation</li>
+</ul>
+
+<hr>
+
+<h2 id="🏆-bonus-points-10-extra-points">🏆 Bonus Points (10 extra points)</h2>
+
+<ul>
+<li><strong>Event-Driven Architecture (+5):</strong> Implement with RabbitMQ/Kafka</li>
+<li><strong>Kubernetes Deployment (+3):</strong> Working K8s manifests</li>
+<li><strong>CI/CD Pipeline (+2):</strong> GitHub Actions or GitLab CI</li>
+<li><strong>Monitoring Dashboard (+2):</strong> Grafana + Prometheus</li>
+<li><strong>Database Per Service (+3):</strong> Complete data isolation</li>
+</ul>
+
+<hr>
+
+<h2 id="❓-faqs">❓ FAQs</h2>
+
+<p><strong>Q: Can I use a different language/framework?</strong></p>
+<p>A: Yes, but starter code is Python/Django. Using Go/Java/Rust is allowed but you'll need to rewrite the monolith first.</p>
+
+<p><strong>Q: Do I need to implement all bonuses?</strong></p>
+<p>A: No, bonuses are optional. Focus on core requirements first.</p>
+
+<p><strong>Q: How much of the monolith code should I reuse?</strong></p>
+<p>A: Business logic can be reused/refactored. Aim for <30% code duplication.</p>
+
+<p><strong>Q: Can I use AI to write all the code?</strong></p>
+<p>A: Yes! That's the point. But you must understand and be able to explain it.</p>
+
+<p><strong>Q: What if I can't finish in 6-8 hours?</strong></p>
+<p>A: Focus on quality over quantity. Complete 2-3 services well rather than all services poorly.</p>
+
+<hr>
+
+<p><strong>Challenge Created:</strong> 2025-11-19</p>
+<p><strong>Difficulty Level:</strong> High</p>
+<p><strong>Recommended Experience:</strong> 3+ years with Python/web development</p>
+<p><strong>AI Advantage Score:</strong> 91/100</p>
+
+<hr>
+
+<p><em>Good luck! Push those AI tools to their limits!</em></p>
+
+        </div>
+
+        <div class="footer">
+            <p><a href="../index.html">← Back to Documentation Hub</a></p>
+            <p>AI-Augmented Coding Challenge Framework | Version: 1.0</p>
+        </div>
+    </div>
+</body>
+</html>

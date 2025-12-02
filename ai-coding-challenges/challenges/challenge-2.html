@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge 2: Distributed Systems - AI Coding Challenges</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-brand">
+                🚀 AI Coding Challenges
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../quick-start.html">Quick Start</a></li>
+                <li><a href="../ai-modes-guide.html">AI Modes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Home</a>
+            <span>→</span> <a href="../challenges/">Challenges</a> <span>→</span> Challenge 2
+        </div>
+
+        <div class="content-wrapper">
+            <h1 id="challenge-2-distributed-event-processing-system">Challenge 2: Distributed Event Processing System</h1>
+
+<p><strong>"Build a Fault-Tolerant, Scalable Event Pipeline from Scratch"</strong></p>
+
+<hr>
+
+<h2 id="🎯-challenge-overview">🎯 Challenge Overview</h2>
+
+<p><strong>Difficulty:</strong> Very High</p>
+<p><strong>Estimated Time:</strong> 8-10 hours</p>
+<p><strong>Recommended AI Modes:</strong> Workspace (40%) + Chat (30%) + Agentic (30%)</p>
+<p><strong>Tech Stack:</strong> Go/Java/Rust (recommended), Kafka/RabbitMQ, PostgreSQL/Cassandra, Docker, Kubernetes</p>
+
+<hr>
+
+<h2 id="📖-scenario">📖 Scenario</h2>
+
+<p>Your company processes financial transactions, IoT sensor data, and user activity events from a rapidly growing user base. Current system constraints:</p>
+
+<ul>
+<li><strong>Scale:</strong> 10,000+ events/second during peak hours</li>
+<li><strong>Reliability:</strong> 99.99% uptime SLA (43 minutes downtime/month)</li>
+<li><strong>Latency:</strong> <100ms p99 processing latency</li>
+<li><strong>Durability:</strong> Exactly-once processing semantics</li>
+<li><strong>Compliance:</strong> Full audit trail for all events</li>
+</ul>
+
+<p>Your mission: <strong>Design and implement a production-grade distributed event processing pipeline.</strong></p>
+
+<hr>
+
+<h2 id="🏗️-system-requirements">🏗️ System Requirements</h2>
+
+<h3 id="functional-requirements">Functional Requirements</h3>
+
+<h4 id="1.-event-ingestion-20-points">1. Event Ingestion (20 points)</h4>
+<ul>
+<li>Accept events via REST API and message queue</li>
+<li>Support multiple event types (transactions, sensor readings, user actions)</li>
+<li>Validate event schemas</li>
+<li>Return acknowledgment to clients</li>
+<li>Handle burst traffic (10x normal load)</li>
+</ul>
+
+<h4 id="2.-event-processing-25-points">2. Event Processing (25 points)</h4>
+<ul>
+<li>Route events to appropriate handlers based on type</li>
+<li>Implement exactly-once processing semantics</li>
+<li>Support event transformations and enrichment</li>
+<li>Handle poison pill messages (malformed events)</li>
+<li>Implement dead letter queue for failed events</li>
+</ul>
+
+<h4 id="3.-state-management-15-points">3. State Management (15 points)</h4>
+<ul>
+<li>Maintain processing state (offsets, checkpoints)</li>
+<li>Support idempotency (deduplicate events)</li>
+<li>Track event lineage and causality</li>
+<li>Persist state durably across failures</li>
+</ul>
+
+<h4 id="4.-fault-tolerance-20-points">4. Fault Tolerance (20 points)</h4>
+<ul>
+<li>Automatic retry with exponential backoff</li>
+<li>Circuit breaker for downstream dependencies</li>
+<li>Graceful degradation under partial failure</li>
+<li>Leader election for worker coordination</li>
+<li>Zero data loss on node failure</li>
+</ul>
+
+<h4 id="5.-observability-15-points">5. Observability (15 points)</h4>
+<ul>
+<li>Real-time metrics (throughput, latency, errors)</li>
+<li>Distributed tracing across components</li>
+<li>Structured logging with correlation IDs</li>
+<li>Alerting for anomalies (latency spikes, error rates)</li>
+<li>Dashboards for monitoring</li>
+</ul>
+
+<h4 id="6.-deployment-&-operations-5-points">6. Deployment & Operations (5 points)</h4>
+<ul>
+<li>Containerized with Docker</li>
+<li>Kubernetes deployment manifests</li>
+<li>Health checks and readiness probes</li>
+<li>Rolling updates without downtime</li>
+<li>Configuration management</li>
+</ul>
+
+<hr>
+
+<h2 id="🗂️-system-architecture">🗂️ System Architecture</h2>
+
+<h3 id="required-components">Required Components</h3>
+
+<pre><code>
+┌─────────────────────────────────────────────────────────┐
+│                      Load Balancer                       │
+│                     (Nginx/HAProxy)                      │
+└────────────┬────────────────────────────┬───────────────┘
+             │                            │
+             ▼                            ▼
+┌────────────────────────┐    ┌────────────────────────┐
+│   API Gateway          │    │   Event Producer       │
+│   (Ingestion Service)  │    │   (External Systems)   │
+│   - Rate Limiting      │    │   - Batch Upload       │
+│   - Auth/Validation    │    │   - Streaming Data     │
+└────────┬───────────────┘    └────────┬───────────────┘
+         │                              │
+         │        ┌─────────────────────┘
+         │        │
+         ▼        ▼
+    ┌────────────────────────────────────┐
+    │      Message Broker (Kafka)        │
+    │      - Event Topics by Type        │
+    │      - Partitioning for Scale      │
+    │      - Replication for Durability  │
+    └───────┬──────────┬──────────┬──────┘
+            │          │          │
+            ▼          ▼          ▼
+    ┌──────────┐ ┌──────────┐ ┌──────────┐
+    │ Worker 1 │ │ Worker 2 │ │ Worker N │
+    │ - Process│ │ - Process│ │ - Process│
+    │ - Transform│ │ - Transform│ │ - Transform│
+    │ - Store  │ │ - Store  │ │ - Store  │
+    └────┬─────┘ └────┬─────┘ └────┬─────┘
+         │            │            │
+         ▼            ▼            ▼
+    ┌────────────────────────────────────┐
+    │     State Store (PostgreSQL)       │
+    │     - Event Metadata               │
+    │     - Processing Checkpoints       │
+    │     - Deduplication Cache          │
+    └────────────────────────────────────┘
+              │
+              ▼
+    ┌────────────────────────────────────┐
+    │     Monitoring &amp; Observability     │
+    │     - Prometheus (Metrics)         │
+    │     - Jaeger (Tracing)             │
+    │     - ELK Stack (Logs)             │
+    └────────────────────────────────────┘
+</code></pre>
+
+<h3 id="event-flow">Event Flow</h3>
+
+<ol>
+<li><strong>Ingestion:</strong> Client sends event → API Gateway validates → Publishes to Kafka</li>
+<li><strong>Processing:</strong> Worker pulls from Kafka → Processes/transforms → Writes to store</li>
+<li><strong>Acknowledgment:</strong> Worker commits offset → Kafka acknowledges → Client notified</li>
+<li><strong>Monitoring:</strong> Metrics emitted at each step → Dashboard shows real-time health</li>
+</ol>
+
+<hr>
+
+<h2 id="🎯-your-mission">🎯 Your Mission</h2>
+
+<h3 id="part-1-core-system-60-points">Part 1: Core System (60 points)</h3>
+
+<h4 id="1.1-api-gateway-service">1.1 API Gateway Service</h4>
+<pre><code>
+// Example event types
+type TransactionEvent struct {
+    ID          string    `json:&quot;id&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Timestamp   time.Time `json:&quot;timestamp&quot;`
+    UserID      string    `json:&quot;user_id&quot;`
+    Amount      float64   `json:&quot;amount&quot;`
+    Currency    string    `json:&quot;currency&quot;`
+    Metadata    map[string]interface{} `json:&quot;metadata&quot;`
+}
+
+type SensorEvent struct {
+    ID          string    `json:&quot;id&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Timestamp   time.Time `json:&quot;timestamp&quot;`
+    DeviceID    string    `json:&quot;device_id&quot;`
+    Reading     float64   `json:&quot;reading&quot;`
+    Unit        string    `json:&quot;unit&quot;`
+    Location    GeoPoint  `json:&quot;location&quot;`
+}
+</code></pre>
+
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>REST endpoints: <code>POST /events</code> (single), <code>POST /events/batch</code> (bulk)</li>
+<li>Schema validation (JSON Schema or Protobuf)</li>
+<li>Rate limiting: 1000 req/min per API key</li>
+<li>Request deduplication (idempotency keys)</li>
+<li>Metrics: request rate, validation errors, publish latency</li>
+</ul>
+
+<h4 id="1.2-event-workers">1.2 Event Workers</h4>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Consumer group for parallel processing</li>
+<li>Configurable processing handlers per event type</li>
+<li>Exactly-once semantics (transaction outbox or similar)</li>
+<li>Automatic retry: 3 attempts with exponential backoff</li>
+<li>Dead letter queue after max retries</li>
+<li>Metrics: processing throughput, error rate, lag</li>
+</ul>
+
+<h4 id="1.3-state-store">1.3 State Store</h4>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Event metadata storage (id, type, status, timestamps)</li>
+<li>Checkpoint storage (last processed offset per partition)</li>
+<li>Deduplication cache (recent event IDs, TTL 24h)</li>
+<li>Audit log (all state transitions)</li>
+</ul>
+
+<h3 id="part-2-fault-tolerance-20-points">Part 2: Fault Tolerance (20 points)</h3>
+
+<h4 id="2.1-chaos-engineering-tests">2.1 Chaos Engineering Tests</h4>
+
+<p>Implement tests for:</p>
+<ul>
+<li><strong>Network Partition:</strong> Worker can't reach Kafka for 30s</li>
+<li><strong>Node Failure:</strong> Worker crashes mid-processing</li>
+<li><strong>Database Downtime:</strong> State store unavailable</li>
+<li><strong>Message Corruption:</strong> Malformed events in queue</li>
+<li><strong>Thundering Herd:</strong> 10x traffic spike in 1 second</li>
+</ul>
+
+<p><strong>Expected Behavior:</strong></p>
+<ul>
+<li>Zero event loss</li>
+<li>Zero duplicate processing</li>
+<li>Automatic recovery without manual intervention</li>
+<li>Degraded mode if dependencies unavailable</li>
+</ul>
+
+<h4 id="2.2-circuit-breaker-pattern">2.2 Circuit Breaker Pattern</h4>
+<pre><code>
+// Implement circuit breaker for downstream calls
+circuitBreaker := NewCircuitBreaker(
+    Threshold: 5,         // Open after 5 failures
+    Timeout: 60 * time.Second,  // Try again after 60s
+    OnOpen: func() {
+        metrics.CircuitBreakerOpened.Inc()
+        log.Warn(&quot;Circuit breaker opened&quot;)
+    },
+)
+</code></pre>
+
+<h3 id="part-3-observability-15-points">Part 3: Observability (15 points)</h3>
+
+<h4 id="3.1-metrics-prometheus">3.1 Metrics (Prometheus)</h4>
+<p><strong>Required Metrics:</strong></p>
+<ul>
+<li><code>events<em>received</em>total</code> (counter, by type)</li>
+<li><code>events<em>processed</em>total</code> (counter, by type, status)</li>
+<li><code>processing<em>duration</em>seconds</code> (histogram)</li>
+<li><code>queue_lag</code> (gauge)</li>
+<li><code>worker_health</code> (gauge)</li>
+<li><code>circuit<em>breaker</em>state</code> (gauge)</li>
+</ul>
+
+<h4 id="3.2-distributed-tracing-jaeger/opentelemetry">3.2 Distributed Tracing (Jaeger/OpenTelemetry)</h4>
+<p><strong>Trace Spans:</strong></p>
+<ul>
+<li>API Gateway: <code>event-ingestion</code></li>
+<li>Kafka Publish: <code>event-publish</code></li>
+<li>Worker Processing: <code>event-processing</code></li>
+<li>Database Write: <code>state-store</code></li>
+</ul>
+
+<p><strong>Include in traces:</strong> Event ID, type, user ID, processing time</p>
+
+<h4 id="3.3-logging">3.3 Logging</h4>
+<p><strong>Structured logs (JSON):</strong></p>
+<pre><code>
+{
+  &quot;timestamp&quot;: &quot;2025-11-19T10:30:45Z&quot;,
+  &quot;level&quot;: &quot;info&quot;,
+  &quot;service&quot;: &quot;event-worker&quot;,
+  &quot;trace_id&quot;: &quot;abc123&quot;,
+  &quot;event_id&quot;: &quot;evt_456&quot;,
+  &quot;event_type&quot;: &quot;transaction&quot;,
+  &quot;message&quot;: &quot;Event processed successfully&quot;,
+  &quot;duration_ms&quot;: 45
+}
+</code></pre>
+
+<h3 id="part-4-deployment-5-points">Part 4: Deployment (5 points)</h3>
+
+<h4 id="4.1-docker">4.1 Docker</h4>
+<ul>
+<li>Dockerfile for each service</li>
+<li>Multi-stage builds for smaller images</li>
+<li>Health check endpoints</li>
+</ul>
+
+<h4 id="4.2-kubernetes">4.2 Kubernetes</h4>
+<p><strong>Required manifests:</strong></p>
+<ul>
+<li>Deployment (with resource limits)</li>
+<li>Service (ClusterIP for workers, LoadBalancer for API)</li>
+<li>ConfigMap (configuration)</li>
+<li>Secret (credentials)</li>
+<li>HorizontalPodAutoscaler (scale workers based on queue lag)</li>
+</ul>
+
+<hr>
+
+<h2 id="📊-evaluation-rubric">📊 Evaluation Rubric</h2>
+
+<h3 id="1.-functional-correctness-25-points">1. Functional Correctness (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>All components working end-to-end</li>
+<li>Exactly-once semantics verified</li>
+<li>Dead letter queue functioning</li>
+<li>Chaos tests passing</li>
+<li>Zero data loss under failures</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Core functionality works</li>
+<li>Minor edge cases missed</li>
+<li>Mostly reliable under failures</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Basic event processing works</li>
+<li>Significant gaps in fault tolerance</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Major functionality broken</li>
+</ul>
+
+<h3 id="2.-code-quality-25-points">2. Code Quality (25 points)</h3>
+
+<p><strong>Excellent (20-25):</strong></p>
+<ul>
+<li>Clean architecture (hexagonal/onion)</li>
+<li>SOLID principles applied</li>
+<li>Clear separation of concerns</li>
+<li>Well-structured error handling</li>
+<li>Production-ready code</li>
+</ul>
+
+<p><strong>Good (15-19):</strong></p>
+<ul>
+<li>Good structure</li>
+<li>Some areas could be cleaner</li>
+<li>Minor code smells</li>
+</ul>
+
+<p><strong>Adequate (10-14):</strong></p>
+<ul>
+<li>Functional but messy</li>
+<li>Poor error handling</li>
+</ul>
+
+<p><strong>Poor (0-9):</strong></p>
+<ul>
+<li>Spaghetti code</li>
+</ul>
+
+<h3 id="3.-ai-utilization-20-points">3. AI Utilization (20 points)</h3>
+
+<p><strong>Excellent (16-20):</strong></p>
+<ul>
+<li>Used Workspace for architecture specification</li>
+<li>Used AI to generate Kubernetes manifests</li>
+<li>Generated comprehensive tests with AI</li>
+<li>Created observability boilerplate with AI</li>
+<li>Custom prompts for distributed patterns</li>
+</ul>
+
+<p><strong>Good (12-15):</strong></p>
+<ul>
+<li>Good AI usage for scaffolding</li>
+<li>Some infrastructure as code generation</li>
+</ul>
+
+<p><strong>Adequate (8-11):</strong></p>
+<ul>
+<li>Basic AI assistance</li>
+</ul>
+
+<p><strong>Poor (0-7):</strong></p>
+<ul>
+<li>Minimal AI usage</li>
+</ul>
+
+<h3 id="4.-testing-&-reliability-15-points">4. Testing & Reliability (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>Unit tests for business logic</li>
+<li>Integration tests for event flow</li>
+<li>Chaos engineering tests passing</li>
+<li>Load tests (>10K events/sec)</li>
+<li>Contract tests for API</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>Good test coverage</li>
+<li>Some integration tests</li>
+<li>Basic load testing</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Minimal tests</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>No tests</li>
+</ul>
+
+<h3 id="5.-documentation-15-points">5. Documentation (15 points)</h3>
+
+<p><strong>Excellent (12-15):</strong></p>
+<ul>
+<li>Architecture Decision Records (ADRs)</li>
+<li>API documentation (OpenAPI)</li>
+<li>Deployment runbook</li>
+<li>Monitoring playbook</li>
+<li>Troubleshooting guide</li>
+</ul>
+
+<p><strong>Good (9-11):</strong></p>
+<ul>
+<li>Good README</li>
+<li>Basic deployment docs</li>
+</ul>
+
+<p><strong>Adequate (6-8):</strong></p>
+<ul>
+<li>Minimal docs</li>
+</ul>
+
+<p><strong>Poor (0-5):</strong></p>
+<ul>
+<li>No docs</li>
+</ul>
+
+<hr>
+
+<h2 id="🚀-getting-started">🚀 Getting Started</h2>
+
+<h3 id="step-1-architecture-planning-workspace-mode">Step 1: Architecture Planning (Workspace Mode)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Design a distributed event processing system with these requirements:
+- Handle 10,000 events/second
+- Exactly-once processing
+- Fault-tolerant (node failures, network partitions)
+- Low latency (&lt;100ms p99)
+
+Provide:
+1. High-level architecture diagram
+2. Component breakdown
+3. Technology choices (message broker, state store)
+4. Data flow specification
+5. Fault tolerance strategy&quot;
+</code></pre>
+
+<h3 id="step-2-bootstrap-project-agentic-mode">Step 2: Bootstrap Project (Agentic Mode)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Create a Go project structure for the event processing system:
+- API Gateway service (REST endpoints)
+- Worker service (Kafka consumer)
+- Shared libraries (event schemas, metrics)
+- Docker Compose for local dev
+- Include Makefile with common commands&quot;
+</code></pre>
+
+<h3 id="step-3-implement-components-agentic-+-chat">Step 3: Implement Components (Agentic + Chat)</h3>
+
+<p><strong>For API Gateway:</strong></p>
+<pre><code>
+&quot;Implement a Go HTTP server with:
+1. POST /events endpoint with schema validation
+2. Rate limiting using golang.org/x/time/rate
+3. Kafka producer integration
+4. Prometheus metrics
+5. Graceful shutdown
+6. Comprehensive error handling&quot;
+</code></pre>
+
+<p><strong>For Worker:</strong></p>
+<pre><code>
+&quot;Implement a Kafka consumer in Go with:
+1. Consumer group for parallel processing
+2. Exactly-once semantics using transactions
+3. Retry logic with exponential backoff
+4. Dead letter queue for failed events
+5. OpenTelemetry tracing
+6. Graceful shutdown on SIGTERM&quot;
+</code></pre>
+
+<h3 id="step-4-add-observability-chat-+-agentic">Step 4: Add Observability (Chat + Agentic)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Add observability to the event processing system:
+1. Prometheus metrics for all components
+2. Jaeger distributed tracing
+3. Structured logging with zerolog
+4. Create Grafana dashboard JSON
+5. Add alerting rules for high error rates&quot;
+</code></pre>
+
+<h3 id="step-5-chaos-testing-chat-+-agentic">Step 5: Chaos Testing (Chat + Agentic)</h3>
+
+<p><strong>Prompt Example:</strong></p>
+<pre><code>
+&quot;Create chaos engineering tests using Go:
+1. Test network partition (worker can&#39;t reach Kafka)
+2. Test worker crash mid-processing
+3. Test database failure
+4. Verify zero data loss
+5. Verify exactly-once semantics
+Use testcontainers-go for infrastructure&quot;
+</code></pre>
+
+<hr>
+
+<h2 id="💡-ai-mode-strategy">💡 AI Mode Strategy</h2>
+
+<h3 id="workspace-mode-40%">Workspace Mode (40%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Initial architecture design</li>
+<li>✅ Component specifications</li>
+<li>✅ Data flow diagrams</li>
+<li>✅ Technology selection trade-offs</li>
+<li>✅ API contract design</li>
+</ul>
+
+<p><strong>Example Prompts:</strong></p>
+<ul>
+<li>"Compare Kafka vs RabbitMQ for this use case"</li>
+<li>"Design exactly-once semantics strategy"</li>
+<li>"Specify Kubernetes deployment strategy"</li>
+</ul>
+
+<h3 id="chat-mode-30%">Chat Mode (30%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Quick API lookups (Kafka client usage)</li>
+<li>✅ Debugging errors</li>
+<li>✅ Best practices queries</li>
+<li>✅ Configuration syntax</li>
+</ul>
+
+<p><strong>Example Prompts:</strong></p>
+<ul>
+<li>"How to configure Kafka consumer groups in Go?"</li>
+<li>"What's the best circuit breaker library for Go?"</li>
+<li>"Explain Prometheus histogram vs summary"</li>
+</ul>
+
+<h3 id="agentic-mode-30%">Agentic Mode (30%)</h3>
+
+<p><strong>Use for:</strong></p>
+<ul>
+<li>✅ Generating Kubernetes manifests</li>
+<li>✅ Creating Docker Compose files</li>
+<li>✅ Writing test suites</li>
+<li>✅ Implementing observability boilerplate</li>
+</ul>
+
+<p><strong>Example Prompts:</strong></p>
+<ul>
+<li>"Generate K8s manifests for 3 services"</li>
+<li>"Create comprehensive integration tests"</li>
+<li>"Add Prometheus metrics to all handlers"</li>
+</ul>
+
+<hr>
+
+<h2 id="📚-resources">📚 Resources</h2>
+
+<h3 id="message-brokers">Message Brokers</h3>
+<ul>
+<li><strong>Kafka:</strong> High-throughput, durable, partitioned</li>
+<li><strong>RabbitMQ:</strong> Flexible routing, simpler ops</li>
+<li><strong>NATS JetStream:</strong> Cloud-native, lightweight</li>
+</ul>
+
+<h3 id="state-stores">State Stores</h3>
+<ul>
+<li><strong>PostgreSQL:</strong> ACID, familiarity</li>
+<li><strong>Cassandra:</strong> High write throughput, distributed</li>
+<li><strong>Redis:</strong> Low latency, limited durability</li>
+</ul>
+
+<h3 id="languages">Languages</h3>
+<ul>
+<li><strong>Go:</strong> Great concurrency, fast, statically typed</li>
+<li><strong>Java:</strong> Mature ecosystem, strong Kafka integration</li>
+<li><strong>Rust:</strong> Performance, safety, steep learning curve</li>
+</ul>
+
+<h3 id="frameworks">Frameworks</h3>
+<ul>
+<li><strong>Go:</strong> chi/gin (HTTP), sarama (Kafka), gorm (ORM)</li>
+<li><strong>Java:</strong> Spring Boot, Kafka Streams, Micronaut</li>
+<li><strong>Rust:</strong> tokio, rdkafka, actix-web</li>
+</ul>
+
+<h3 id="testing">Testing</h3>
+<ul>
+<li><strong>Testcontainers:</strong> Infrastructure for tests</li>
+<li><strong>Toxiproxy:</strong> Network chaos testing</li>
+<li><strong>Locust/k6:</strong> Load testing</li>
+</ul>
+
+<hr>
+
+<h2 id="⏱️-time-allocation">⏱️ Time Allocation</h2>
+
+<table>
+<thead><tr>
+<th>Phase</th>
+<th>Time</th>
+<th>AI Mode</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Architecture Planning</strong></td>
+<td>1.5h</td>
+<td>Workspace</td>
+</tr>
+<tr>
+<td><strong>Project Bootstrap</strong></td>
+<td>0.5h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>2h</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>Event Workers</strong></td>
+<td>2.5h</td>
+<td>Agentic + Chat</td>
+</tr>
+<tr>
+<td><strong>State Store</strong></td>
+<td>1h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Observability</strong></td>
+<td>1.5h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Chaos Tests</strong></td>
+<td>1.5h</td>
+<td>Chat + Agentic</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>1h</td>
+<td>Agentic</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>0.5h</td>
+<td>Agentic</td>
+</tr>
+</tbody></table>
+
+<p><strong>Total: 12 hours</strong> (with buffer)</p>
+
+<hr>
+
+<h2 id="🏆-bonus-points-15-extra-points">🏆 Bonus Points (15 extra points)</h2>
+
+<ul>
+<li><strong>Event Sourcing (+5):</strong> Full event store with replay</li>
+<li><strong>CQRS Pattern (+3):</strong> Separate read/write models</li>
+<li><strong>Kubernetes Operator (+5):</strong> Custom resource for auto-scaling</li>
+<li><strong>Multi-Region (+5):</strong> Active-active across regions</li>
+<li><strong>Schema Registry (+2):</strong> Avro/Protobuf with versioning</li>
+</ul>
+
+<hr>
+
+<h2 id="🎓-learning-objectives">🎓 Learning Objectives</h2>
+
+<ol>
+<li><strong>Distributed Systems Design</strong> with AI planning</li>
+<li><strong>Fault Tolerance Patterns</strong> implementation</li>
+<li><strong>Observability</strong> as first-class concern</li>
+<li><strong>Infrastructure as Code</strong> generation with AI</li>
+<li><strong>Production-Ready</strong> coding standards</li>
+</ol>
+
+<hr>
+
+<h2 id="📝-submission-requirements">📝 Submission Requirements</h2>
+
+<ol>
+<li><strong>Code:</strong> GitHub repo with all services</li>
+<li><strong>Documentation:</strong> Architecture, deployment, monitoring</li>
+<li><strong>Demo:</strong> Video showing chaos tests passing</li>
+<li><strong>AI Log:</strong> Document effective prompts and strategies</li>
+</ol>
+
+<hr>
+
+<p><strong>Challenge Created:</strong> 2025-11-19</p>
+<p><strong>Difficulty Level:</strong> Very High</p>
+<p><strong>Recommended Experience:</strong> 5+ years, distributed systems knowledge</p>
+<p><strong>AI Advantage Score:</strong> 91/100</p>
+
+<hr>
+
+<p><em>Build systems that don't break. Use AI to get there faster.</em></p>
+
+        </div>
+
+        <div class="footer">
+            <p><a href="../index.html">← Back to Documentation Hub</a></p>
+            <p>AI-Augmented Coding Challenge Framework | Version: 1.0</p>
+        </div>
+    </div>
+</body>
+</html>
